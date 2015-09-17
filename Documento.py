@@ -5,6 +5,9 @@ import sys
 import codecs
 import nltk
 import math
+import pymongo
+import datetime
+import settings as set
 
 from Utils import utilidades
 
@@ -29,7 +32,7 @@ class Document(object):
         self.texto = result['texto']
         self.totalsentencias = 0
         self.sentenciascontermino = 0
-
+        self.encontrado()
 
     #def cargadoc(self, cursor):
     #    for x in cursor:
@@ -38,7 +41,7 @@ class Document(object):
         sentencias=[s for s in self.sents if len(s)>100]
         sentencias = self.sents
         self.totalsentencias=len(sentencias)
-        print(len(sentencias))
+
         IDF=1
         for s in sentencias:
             resultado.append([s,self.calcula_similaridad(s,pregunta)])
@@ -68,7 +71,6 @@ class Document(object):
         #except:
         #    print("no se puede escribir")
 
-
         # Remove stopwords from question and passage
         # and split it into words
         q = utilidades.SinStopwords(q)
@@ -94,5 +96,9 @@ class Document(object):
         return TF
 
 
-
+    def encontrado(self):
+        client = pymongo.MongoClient(set.MONGODB_URI)
+        db = client.docs
+        DOC=db.DOCS
+        DOC.find_one_and_update({'nombre':self.nombre}, {'$inc': {'enc': 1}, '$set':  {"fecha": datetime.datetime.utcnow()}},upsert=True)
 

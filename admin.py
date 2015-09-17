@@ -3,11 +3,13 @@
 import pymongo
 import mongodb
 import Documento
+import settings as set
 from Utils import utilidades
 from bson.objectid import ObjectId
 from flask import Flask, redirect, request
 from flask import render_template, jsonify
 from nltk.corpus import stopwords
+from flask_admin import Admin
 import flask_admin as admin
 from wtforms import form, fields
 from flask_admin.form import Select2Widget
@@ -27,29 +29,24 @@ def busqueda_indices(tags):
     return result
 
 def busqueda_resp(pregunta):
-    print("Funcion busqueda_resp")
+
     #MONGODB_URI = 'mongodb://takesibatch:takesi2015@ds053439.mongolab.com:53439/docs'
-    client = pymongo.MongoClient(MONGODB_URI)
+    client = pymongo.MongoClient(set.MONGODB_URI)
     db = client.docs
     DOC=db.DOCS
     #db.DOCS.createIndex({"tags_vocab":"text", "texto": "text", "nombre": "text", "tags":"text"},{"name":"indice", "weights":{"tags_vocab":4, "texto":2, "nombre": 3, "tags":5}})
-    result=DOC.find({ "$text": { "$search": pregunta, "$language": "es"}}, {"_id":1, "nombre": 1,"texto":1,  "score": { "$meta":"textScore"}}).sort([('score', {'$meta': 'textScore'})]).limit(5)
-
+    result=DOC.find({ "$text": { "$search": pregunta, "$language": "es"}}, {"_id":1, "nombre": 1,"texto":1,  "score": { "$meta":"textScore"}}).sort([('score', {'$meta': 'textScore'})]).limit(set.TOTAL_DOCUMENTOS)
     return result
 
 
 
 # Create application
 app = Flask(__name__)
-
 # Create dummy secrey key so we can use sessions
 app.config['SECRET_KEY'] = '123456790'
 
-# Create models
-MONGODB_URI = 'mongodb://takesibatch:takesi2015@ds053439.mongolab.com:53439/docs'
-#MONGODB_URI = 'mongodb://localhost:27017/'
 
-client = pymongo.MongoClient(MONGODB_URI)
+client = pymongo.MongoClient(set.MONGODB_URI)
 db = client.docs
 DOCS=db.docs
 
@@ -72,12 +69,12 @@ class CorpusForm(form.Form):
 
 
 class CorpusView(ModelView):
-	can_create = False
-	can_edit = False
-	can_delete = False
-	column_list = ('nombre', 'num_words', 'enc', 'pos', 'neg')
-	column_sortable_list = ('nombre', 'num_words', 'enc', 'pos', 'neg')
-	form = CorpusForm
+    can_create = False
+    can_edit = False
+    can_delete = False
+    column_list = ('nombre', 'num_words', 'enc', 'pos', 'neg')
+    column_sortable_list = ('nombre', 'num_words', 'enc', 'pos', 'neg')
+    form = CorpusForm
 
 # Flask views
 @app.route('/')
@@ -86,31 +83,26 @@ def index():
 
 @app.route('/doc/<id>')
 def show_doc(id):
-    #MONGODB_URI = 'mongodb://takesibatch:takesi2015@ds053439.mongolab.com:53439/docs'
-    client = pymongo.MongoClient(MONGODB_URI)
+
+    client = pymongo.MongoClient(set.MONGODB_URI)
     db = client.docs
     DOC=db.DOCS
-    print(id)
     results=DOC.find({"_id": ObjectId(id)}, {"texto" :1,"_id":0})
     return render_template('texto.html', results=results)
 
 @app.route('/stats/')
 def estadisticas():
 
-    MONGODB_URI = 'mongodb://takesibatch:takesi2015@ds053439.mongolab.com:53439/docs'
-    client = pymongo.MongoClient(MONGODB_URI)
+    client = pymongo.MongoClient(set.MONGODB_URI)
     db = client.docs
     DOC=db.DOCS
     pipeline = [{"$unwind": "$tag_vocab"},{"$group": {"_id": "$tag_vocab", "count": {"$sum": 1}}},{"$sort": SON([("count", -1), ("_id", -1)])}]
     data=(list(DOC.aggregate(pipeline)))
-    print(data)
     return jsonify(output=data)
 
 @app.route('/busqueda', methods=['POST'])
 def busqueda():
     pregunta=request.form['text']
-    print(MONGODB_URI)
-
     vocab=bw.LeeBagWords()
     pregunta_2=utilidades.SinStopwords(pregunta)
     pregunta_2=utilidades.Stemming(pregunta_2)
@@ -122,9 +114,10 @@ def busqueda():
         doc=Documento.Document(d)
         text.append(doc.similaridad(pregunta_2))
     text=sorted(text, key=lambda text: text[1], reverse=True)
+    t = tuple(x[0] for x in text)
     #text=reader.localizar(pregunta)
 
-    return render_template('resultados.html',  resps=respuestas, entries=text, question=pregunta)
+    return render_template('resultados.html',  resps=respuestas, entries=t, question=pregunta)
 
 @app.route('/graph/')
 def home():
@@ -132,6 +125,6 @@ def home():
     return render_template('chart1.html')
 
 if __name__ == '__main__':
-    admin = admin.Admin(app, name='Takesi: Corpus')
-    admin.add_view(CorpusView(db.INDEX, 'Corpus'))
+    admin = Admin(app, name='Takesi: Corpus', template_mode='bootstrap3')
+    admin.add_view(CorpusView(db.DOCS,"Corpus"))
     app.run(debug=True)

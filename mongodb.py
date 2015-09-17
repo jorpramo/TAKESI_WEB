@@ -2,6 +2,7 @@ import pymongo
 import nltk
 import nltk.data
 import datetime
+import settings as set
 from nltk.data import LazyLoader
 from nltk.tokenize import TreebankWordTokenizer
 from nltk.util import AbstractLazySequence, LazyMap, LazyConcatenation
@@ -9,12 +10,9 @@ from nltk import word_tokenize
 
 class BagWords:
     def __init__(self, host='localhost', port=27017, db='docs', collection='BAGWORDS'):
-        MONGODB_URI = 'mongodb://takesibatch:takesi2015@ds053439.mongolab.com:53439/docs'
-        #MONGODB_URI = 'mongodb://localhost:27017/'
-        self.conn = pymongo.MongoClient(MONGODB_URI)
+        self.conn = pymongo.MongoClient(set.MONGODB_URI)
         self.collection = self.conn[db][collection]
     def LeeBagWords(self):
-        #MONGODB_URI = 'mongodb://takesibatch:takesi2015@ds053439.mongolab.com:53439/docs'
         tags=self.collection.find(projection={"_id":0})
         print(tags.count())
         vector=[]
@@ -24,23 +22,13 @@ class BagWords:
             #data=json.loads(t)
             #print(data['tag'])
         return vector
-#MONGODB_URI = 'mongodb://takesibatch:takesi2015@ds053439.mongolab.com:53439/docs'
-
-def busqueda_resp(pregunta, indices):
-    #MONGODB_URI = 'mongodb://takesibatch:takesi2015@ds053439.mongolab.com:53439/docs'
-    client = pymongo.MongoClient(MONGODB_URI)
-    db = client.docs
-    indices=db.DOCS
-
 
 
 class MongoDBPreguntas(object):
     def __init__(self, host='localhost', port=27017, db='docs',
                  collection='PREGUNTAS'):
-        MONGODB_URI = 'mongodb://takesibatch:takesi2015@ds053439.mongolab.com:53439/docs'
-        #MONGODB_URI = 'mongodb://localhost:27017/'
 
-        self.conn = pymongo.MongoClient(MONGODB_URI)
+        self.conn = pymongo.MongoClient(set.MONGODB_URI)
         self.collection = self.conn[db][collection]
 
     def inserta_pregunta(self, pregunta):
@@ -54,10 +42,8 @@ class MongoDBPreguntas(object):
 class MongoDBLazySequence(AbstractLazySequence):
     def __init__(self, host='localhost', port=27017, db='docs',
                  collection='DOCS', field='texto'):
-        #MONGODB_URI = 'mongodb://takesibatch:takesi2015@ds053439.mongolab.com:53439/docs'
-        MONGODB_URI = 'mongodb://localhost:27017/'
 
-        self.conn = pymongo.MongoClient(MONGODB_URI)
+        self.conn = pymongo.MongoClient(set.MONGODB_URI)
         self.collection = self.conn[db][collection]
         self.field = field
 

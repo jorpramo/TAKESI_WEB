@@ -9,15 +9,16 @@
 <div id="logo" align="center" > <img src="./static/logo.jpg" height="100" width="80"></img></div>
  Resultados: {{ question }}
  <div id="results">
- <ul class="entries">
+ <p class="entries">
   {% for entry in entries %}
-     {% for line in entries %}
-    <li>{{ line }}<br>
-        {% endfor %}
+     {% for line in entry %}
+     {{ line }}<br>
+
+        {% endfor %}<br>
   {% else %}
-    <li><em>No hay respuestas coincidentes</em>
+    <em>No hay respuestas coincidentes</em>
   {% endfor %}
-</ul>
+</p>
 
 Documentos más cercanos a la búsqueda:
 <ul class="entries">
