@@ -11,7 +11,9 @@
  <div id="results">
  <ul class="entries">
   {% for entry in entries %}
-    <li>{{ entry }}
+     {% for line in entries %}
+    <li>{{ line }}<br>
+        {% endfor %}
   {% else %}
     <li><em>No hay respuestas coincidentes</em>
   {% endfor %}

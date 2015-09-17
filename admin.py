@@ -103,6 +103,7 @@ def estadisticas():
     DOC=db.DOCS
     pipeline = [{"$unwind": "$tag_vocab"},{"$group": {"_id": "$tag_vocab", "count": {"$sum": 1}}},{"$sort": SON([("count", -1), ("_id", -1)])}]
     data=(list(DOC.aggregate(pipeline)))
+    print(data)
     return jsonify(output=data)
 
 @app.route('/busqueda', methods=['POST'])
@@ -111,13 +112,10 @@ def busqueda():
     print(MONGODB_URI)
 
     vocab=bw.LeeBagWords()
-
     pregunta_2=utilidades.SinStopwords(pregunta)
     pregunta_2=utilidades.Stemming(pregunta_2)
-
     writer.inserta_pregunta(pregunta_2)
     respuestas=busqueda_resp(pregunta_2)
-
     docs=respuestas.clone()
     text=[]
     for d in docs:
@@ -132,6 +130,7 @@ def busqueda():
 def home():
     """ Simply serve our chart page """
     return render_template('chart1.html')
+
 if __name__ == '__main__':
     admin = admin.Admin(app, name='Takesi: Corpus')
     admin.add_view(CorpusView(db.INDEX, 'Corpus'))

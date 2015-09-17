@@ -3,6 +3,7 @@ __author__ = 'jpradas'
 
 import nltk.corpus
 from nltk.stem.porter import PorterStemmer
+from nltk.tokenize import word_tokenize
 
 def Stemming(text):
     porter = PorterStemmer()
