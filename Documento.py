@@ -8,6 +8,7 @@ import math
 import pymongo
 import datetime
 import settings as set
+from nltk.text import TextCollection
 
 from Utils import utilidades
 
@@ -18,7 +19,7 @@ class Document(object):
         self.nombre = result['nombre']
         self.score = result['score']
         #self.sents = nltk.sent_tokenize(result['texto'],language='spanish')
-        lines=result['texto'].replace('..','').split(".")
+        lines=result['texto'].split(".")
         parrafo=[]
         total=[]
         lines=[s for s in lines if len(s)>20]
@@ -38,8 +39,8 @@ class Document(object):
     #    for x in cursor:
     def similaridad(self, pregunta):
         resultado=[]
-        sentencias=[s for s in self.sents if len(s)>100]
-        sentencias = self.sents
+        sentencias=[s for s in self.sents if len("".join(s))>100]
+        #sentencias = self.sents
         self.totalsentencias=len(sentencias)
 
         IDF=1
@@ -73,14 +74,13 @@ class Document(object):
 
         # Remove stopwords from question and passage
         # and split it into words
-        q = utilidades.SinStopwords(q)
+        #q = utilidades.SinStopwords(q)
         text = utilidades.SinStopwords("".join(text))
-        q = utilidades.Stemming(q)
+        #q = utilidades.Stemming(q)
         text = utilidades.Stemming("".join(text))
         q=q.split()
         text=text.split()
-        # Filter all words in passage that they are
-        # not present in question
+
         words = list(filter(lambda x: x in q, text))
         #print(words)
         # Our initial score is the number of coincidences
@@ -102,3 +102,20 @@ class Document(object):
         DOC=db.DOCS
         DOC.find_one_and_update({'nombre':self.nombre}, {'$inc': {'enc': 1}, '$set':  {"fecha": datetime.datetime.utcnow()}},upsert=True)
 
+
+    def similaridad_NLTK_tf_idf(self, pregunta):
+        resultado=[]
+        #sentencias=self.sents
+        sentencias=[s for s in self.sents if len("".join(s))>100]
+        self.totalsentencias=len(sentencias)
+        texto=TextCollection(self.texto)
+
+        for s in sentencias:
+            resultado.append([s,texto.tf_idf(pregunta," ".join(s))])
+
+        resultado=sorted(resultado, key=lambda res: res[1])
+        final=resultado[-1]
+        punt=final[1]
+        cadena=final[0]
+        print(cadena, punt)
+        return [cadena, punt]

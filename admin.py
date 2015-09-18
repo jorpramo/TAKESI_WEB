@@ -34,7 +34,7 @@ def busqueda_resp(pregunta):
     client = pymongo.MongoClient(set.MONGODB_URI)
     db = client.docs
     DOC=db.DOCS
-    #db.DOCS.createIndex({"tags_vocab":"text", "texto": "text", "nombre": "text", "tags":"text"},{"name":"indice", "weights":{"tags_vocab":4, "texto":2, "nombre": 3, "tags":5}})
+    #db.DOCS.createIndex({"tags_vocab":"text", "texto": "text", "nombre": "text", "tags":"text", "tags_bi":"text"},{"name":"indice", "weights":{"tags_vocab":4, "texto":2, "nombre": 3, "tags":5, "tags_bi":1}})
     result=DOC.find({ "$text": { "$search": pregunta, "$language": "es"}}, {"_id":1, "nombre": 1,"texto":1,  "score": { "$meta":"textScore"}}).sort([('score', {'$meta': 'textScore'})]).limit(set.TOTAL_DOCUMENTOS)
     return result
 
@@ -110,11 +110,15 @@ def busqueda():
     respuestas=busqueda_resp(pregunta_2)
     docs=respuestas.clone()
     text=[]
+    text2=[]
     for d in docs:
         doc=Documento.Document(d)
         text.append(doc.similaridad(pregunta_2))
+        #text2.append(doc.similaridad_NLTK_tf_idf(pregunta_2))
     text=sorted(text, key=lambda text: text[1], reverse=True)
+    #text2=sorted(text2, key=lambda text2: text2[1], reverse=True)
     t = tuple(x[0] for x in text)
+    #t2 = tuple(x[0] for x in text2)
     #text=reader.localizar(pregunta)
 
     return render_template('resultados.html',  resps=respuestas, entries=t, question=pregunta)
