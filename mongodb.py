@@ -102,8 +102,7 @@ class MongoDBCorpusReader(object):
             c = nltk.ContextIndex(text.tokens, key = lambda s: s.lower())
             c1 = nltk.ConcordanceIndex(text.tokens, key = lambda s: s.lower())
             fd=c.common_contexts(cadena)
-            print(fd)
-            print(cadena)
+
 
         return fd
 

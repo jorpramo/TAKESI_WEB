@@ -13,9 +13,8 @@ from nltk.text import TextCollection
 from Utils import utilidades
 
 class Document(object):
-
     def __init__(self, result):
-        print(result.keys())
+
         self.nombre = result['nombre']
         self.score = result['score']
         #self.sents = nltk.sent_tokenize(result['texto'],language='spanish')
@@ -53,7 +52,7 @@ class Document(object):
             print("Division por cero")
         for row in resultado:
             row[1]=row[1]/IDF
-            #print(row[1])
+
         resultado=sorted(resultado, key=lambda res: res[1])
         final=resultado[-1]
         punt=final[1]
@@ -67,13 +66,7 @@ class Document(object):
         rank = self.score
         q = pregunta
         text = sent
-        #try:
-        #    print(sent)
-        #except:
-        #    print("no se puede escribir")
 
-        # Remove stopwords from question and passage
-        # and split it into words
         #q = utilidades.SinStopwords(q)
         text = utilidades.SinStopwords("".join(text))
         #q = utilidades.Stemming(q)
@@ -82,8 +75,7 @@ class Document(object):
         text=text.split()
 
         words = list(filter(lambda x: x in q, text))
-        #print(words)
-        # Our initial score is the number of coincidences
+
         score = len(words)
         try:
             TF= len(words)/len(text)
@@ -117,5 +109,17 @@ class Document(object):
         final=resultado[-1]
         punt=final[1]
         cadena=final[0]
-        print(cadena, punt)
         return [cadena, punt]
+
+class estados(object):
+    def __init__(self, id):
+        client = pymongo.MongoClient(set.MONGODB_URI)
+        db = client.docs
+        self.id=id
+        self.DOC=db.DOCS
+
+    def positivo(self):
+        self.DOC.find_one_and_update({'_id':self.id}, {'$inc': {'pos': 1}, '$set':  {"fecha": datetime.datetime.utcnow()}},upsert=True)
+
+    def negativo(self):
+        self.DOC.find_one_and_update({'_id':self.id}, {'$inc': {'neg': 1}, '$set':  {"fecha": datetime.datetime.utcnow()}},upsert=True)

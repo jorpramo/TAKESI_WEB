@@ -25,6 +25,8 @@ Documentos más cercanos a la búsqueda:
 <ul class="entries">
   {% for resp in resps %}
     <a href="/doc/{{resp._id}}">{{ resp.nombre }}</a>  <div id="score">({{resp.score}})</div>
+    <div id="pos"> <a href="/doc/pos/{{resp._id}}">Positivo</a></div>
+    <div id="neg"> <a href="/doc/neg/{{resp._id}}">Falso</a></div>
   {% else %}
     <em>No hay documentos coincidentes</em>
   {% endfor %}

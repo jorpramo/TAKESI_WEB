@@ -5,22 +5,17 @@ import mongodb
 import Documento
 import settings as set
 from Utils import utilidades
-from bson.objectid import ObjectId
-from flask import Flask, redirect, request
+from flask import Flask, redirect, request, url_for
 from flask import render_template, jsonify
-from nltk.corpus import stopwords
 from flask_admin import Admin
 import flask_admin as admin
 from wtforms import form, fields
-from flask_admin.form import Select2Widget
 from flask_admin.contrib.pymongo import ModelView, filters
-from flask_admin.model.fields import InlineFormField, InlineFieldList
 from bson.objectid import ObjectId
 from bson.son import SON
 
 
 def busqueda_indices(tags):
-    #MONGODB_URI = 'mongodb://takesibatch:takesi2015@ds053439.mongolab.com:53439/docs'
     indices=db.INDEX
     list=indices.find({"tag_vocab" : { '$in': tags}}, projection={"id_doc":1,"_id":0})
     result=[]
@@ -30,7 +25,6 @@ def busqueda_indices(tags):
 
 def busqueda_resp(pregunta):
 
-    #MONGODB_URI = 'mongodb://takesibatch:takesi2015@ds053439.mongolab.com:53439/docs'
     client = pymongo.MongoClient(set.MONGODB_URI)
     db = client.docs
     DOC=db.DOCS
@@ -57,7 +51,6 @@ bw = mongodb.BagWords()
 # User admin
 class InnerForm(form.Form):
     name = fields.TextField('Búsqueda')
-    # test = fields.TextField('Test')
 
 
 class CorpusForm(form.Form):
@@ -81,14 +74,31 @@ class CorpusView(ModelView):
 def index():
     return render_template('index_takesi.html') 
 
+@app.route('/doc/neg/<id>')
+def pos_neg(id):
+    estado=Documento.estados(id)
+    estado.negativo()
+    print("negativo")
+    return 'Negativo'
+
+@app.route('/doc/pos/<id>')
+def pos_doc(id):
+    estado=Documento.estados(id)
+    estado.positivo()
+    print("positivo")
+    return 'Positivo'
+
 @app.route('/doc/<id>')
 def show_doc(id):
-
     client = pymongo.MongoClient(set.MONGODB_URI)
     db = client.docs
     DOC=db.DOCS
-    results=DOC.find({"_id": ObjectId(id)}, {"texto" :1,"_id":0})
-    return render_template('texto.html', results=results)
+    results=DOC.find({"_id": ObjectId(id)}, {"nombre" :1,"_id":0})
+    for doc in results:
+        file=doc['nombre'].replace('.txt', '.pdf')
+    return redirect(url_for('static', filename="PDF/"+file))
+
+    #return render_template('texto.html', results=results)
 
 @app.route('/stats/')
 def estadisticas():
@@ -127,6 +137,12 @@ def busqueda():
 def home():
     """ Simply serve our chart page """
     return render_template('chart1.html')
+
+
+def redirect_url(default='index'):
+    return request.args.get('next') or \
+           request.referrer or \
+           url_for(default)
 
 if __name__ == '__main__':
     admin = Admin(app, name='Takesi: Corpus', template_mode='bootstrap3')
