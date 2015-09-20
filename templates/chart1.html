@@ -14,13 +14,12 @@ $(document).ready(function(){
 		var s1 = [];
         var ticks = [];
         $.getJSON('/stats/',function (data) { 
-		console.log(data.output.length);
+		console.log(data.length);
 		
-		for (var i=0; i<data.output.length; i++) {ticks.push(data.output[i]._id);
-		s1.push(data.output[i].count);}
+		for (var i=0; i<data.length; i++) {ticks.push(data[i]._id);
+		s1.push(data[i].total);}
 		console.log(s1);
         plot1 = $.jqplot('chart2', [s1], {
-            // Only animate if we're not using excanvas (not in IE 7 or IE 8)..
             animate: !$.jqplot.use_excanvas,
             seriesDefaults:{
                 renderer:$.jqplot.BarRenderer,
@@ -36,67 +35,39 @@ $(document).ready(function(){
         });
 		});
      
-        $('#chart1').bind('jqplotDataClick', 
+        $('#chart2').bind('jqplotDataClick',
             function (ev, seriesIndex, pointIndex, data) {
-                $('#info1').html('series: '+seriesIndex+', point: '+pointIndex+', data: '+data);
+                $('#info1').html('series: '+seriesIndex+', point: '+pointIndex+', data: '+data+', ticks: '+ ticks[pointIndex] );
+                actualiza_documentos(ticks[pointIndex])
+
             }
         );
     });
+function actualiza_documentos(cadena) {
+$.getJSON('/listadoc/' + cadena,function (json) {
+        var tr;
+        for (var i = 0; i < json.length; i++) {
+            tr = $('<tr/>');
+            tr.append("<td>" + json[i].User_Name + "</td>");
+            tr.append("<td>" + json[i].score + "</td>");
+            tr.append("<td>" + json[i].team + "</td>");
+            $('documentos#table').append(tr);
+        }
+    });
 
-$(document).ready(function(){
-$.jqplot('chartdiv', [[[1, 21],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[11,190.9]]],
-{ title:'Exponential Line',
-axes:{yaxis:{renderer: $.jqplot.LogAxisRenderer}},
-series:[{renderer:$.jqplot.LineRenderer}],
-seriesDefaults: {lineWidth: 5, label:'Prueba', color:'#10A1F8'},
-legend: {show: true},
-
-});
-
-var s1 = [200, 600, 700, 1000];
-var s2 = [460, -210, 690, 820];
-var s3 = [-260, -440, 320, 200];
-var ticks = ['Mayo', 'Junio', 'Julio', 'Agosto'];
- var plot1 = $.jqplot('chart1', [s1, s2, s3], {
-// The "seriesDefaults" option is an options object that will
-// be applied to all series in the chart.
-/* seriesDefaults:{
-            renderer:$.jqplot.BarRenderer,
-            rendererOptions: {fillToZero: true}
-        },*/
-seriesDefaults:{
-  renderer:$.jqplot.BarRenderer,
-  rendererOptions: { barDirection: 'horizontal'}},
-// Custom labels for the series are specified with the "label"
-// option on the series option. Here a series option object
-// is specified for each series.
-series:[{label:'Hotel'},
-{label:'Registros al Evento'},
-{label:'Boletos de avion'}],
-// Show the legend and put it outside the grid, but inside the
-// plot container, shrinking the grid to accomodate the legend.
-// A value of "outside" would not shrink the grid and allow
-// the legend to overflow the container.
-legend: {
-show: true,
-placement: 'outsideGrid'
-},
-axes: {
-yaxis: {
-renderer: $.jqplot.CategoryAxisRenderer,
-ticks: ticks},
-xaxis: {
-pad: 1.05,
-tickOptions: {formatString: '$%d'}
-  
 }
-}
-});
-});
 </script>
 </head>
 <body>
-<div id="chart2" style="height:500px;width:700px;"></div>
+
+<div><span>You Clicked: </span><span id="info1">Nothing yet</span></div>
+<div id="chart2" style="height:500px;width:1000px;"></div>
+<div id="documentos" style="height:500px;width:800px;">
+    <table>
+
+    </table>
+
+</div>
 
 </body>
 </html>

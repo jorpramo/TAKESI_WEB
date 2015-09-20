@@ -32,7 +32,6 @@ class MongoDBPreguntas(object):
         self.collection = self.conn[db][collection]
 
     def inserta_pregunta(self, pregunta):
-        post = {"pregunta": pregunta, "fecha": datetime.datetime.utcnow(),"count":1}
         id=self.collection.find_one_and_update({'pregunta':pregunta}, {'$inc': {'count': 1}, '$set':  {"fecha": datetime.datetime.utcnow()}},upsert=True)
 
         #self.collection.insert_one(post).inserted_id
@@ -102,8 +101,6 @@ class MongoDBCorpusReader(object):
             c = nltk.ContextIndex(text.tokens, key = lambda s: s.lower())
             c1 = nltk.ConcordanceIndex(text.tokens, key = lambda s: s.lower())
             fd=c.common_contexts(cadena)
-
-
         return fd
 
 

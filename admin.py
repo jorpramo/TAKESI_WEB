@@ -13,7 +13,9 @@ from wtforms import form, fields
 from flask_admin.contrib.pymongo import ModelView, filters
 from bson.objectid import ObjectId
 from bson.son import SON
-
+import datetime
+from estadisticas import stats
+from bson.json_util import dumps
 
 def busqueda_indices(tags):
     indices=db.INDEX
@@ -28,7 +30,7 @@ def busqueda_resp(pregunta):
     client = pymongo.MongoClient(set.MONGODB_URI)
     db = client.docs
     DOC=db.DOCS
-    #db.DOCS.createIndex({"tags_vocab":"text", "texto": "text", "nombre": "text", "tags":"text", "tags_bi":"text"},{"name":"indice", "weights":{"tags_vocab":4, "texto":2, "nombre": 3, "tags":5, "tags_bi":1}})
+    #db.DOCS.createIndex({"tags_vocab":"text", "texto": "text", "nombre": "text", "tags":"text"},{"name":"indice", "weights":{"tags_vocab":4, "texto":10, "nombre": 8, "tags":5, }},{ default_language: "spanish" })
     result=DOC.find({ "$text": { "$search": pregunta, "$language": "es"}}, {"_id":1, "nombre": 1,"texto":1,  "score": { "$meta":"textScore"}}).sort([('score', {'$meta': 'textScore'})]).limit(set.TOTAL_DOCUMENTOS)
     return result
 
@@ -88,6 +90,22 @@ def pos_doc(id):
     print("positivo")
     return 'Positivo'
 
+@app.route('/listadoc/<cadena>')
+def listadoc(cadena):
+    cadena=cadena.lower()
+    client = pymongo.MongoClient(set.MONGODB_URI)
+    db = client.docs
+    DOC=db.DOCS
+    result=DOC.find({ "$text": { "$search": cadena, "$language": "es"}}, {"_id":0, "nombre": 1, "score": { "$meta":"textScore"}}).sort([('score', {'$meta': 'textScore'})])
+    tags=db.DOCS.aggregate([{"$match": {"tags_vocab":cadena}},{"$group":{"_id":"$nombre","total":{"$sum":1}}}])
+    resultado=[]
+    for t in tags:
+        if t.nombre in [s for s in result['nombre']]
+        resultado.append([t._id,t.nombre,totales[t.nombre]])
+    data=dumps(list(resultado))
+    print(data)
+    return 1
+
 @app.route('/doc/<id>')
 def show_doc(id):
     client = pymongo.MongoClient(set.MONGODB_URI)
@@ -98,7 +116,6 @@ def show_doc(id):
         file=doc['nombre'].replace('.txt', '.pdf')
     return redirect(url_for('static', filename="PDF/"+file))
 
-    #return render_template('texto.html', results=results)
 
 @app.route('/stats/')
 def estadisticas():
@@ -106,38 +123,61 @@ def estadisticas():
     client = pymongo.MongoClient(set.MONGODB_URI)
     db = client.docs
     DOC=db.DOCS
-    pipeline = [{"$unwind": "$tag_vocab"},{"$group": {"_id": "$tag_vocab", "count": {"$sum": 1}}},{"$sort": SON([("count", -1), ("_id", -1)])}]
-    data=(list(DOC.aggregate(pipeline)))
-    return jsonify(output=data)
+    pipeline = [{"$unwind":"$tags_vocab"},{"$group":{"_id":"$tags_vocab", "total":{"$sum":1}}},{"$sort":{"total":-1}}]
+    data=dumps(list(DOC.aggregate(pipeline)))
+
+    return data
+
 
 @app.route('/busqueda', methods=['POST'])
 def busqueda():
+    print('Inicio: ' + str(datetime.datetime.now()))
     pregunta=request.form['text']
-    vocab=bw.LeeBagWords()
     pregunta_2=utilidades.SinStopwords(pregunta)
     pregunta_2=utilidades.Stemming(pregunta_2)
+    print('Fin ofrmateo pregunta: ' + str(datetime.datetime.now()))
     writer.inserta_pregunta(pregunta_2)
+    print('Fin insercion pregunta: ' + str(datetime.datetime.now()))
     respuestas=busqueda_resp(pregunta_2)
+    print('Fin busq respuestas 1: ' + str(datetime.datetime.now()))
     docs=respuestas.clone()
     text=[]
     text2=[]
     for d in docs:
         doc=Documento.Document(d)
-        text.append(doc.similaridad(pregunta_2))
-        #text2.append(doc.similaridad_NLTK_tf_idf(pregunta_2))
+        print('Inicio Iteracion DOC: ' + str(datetime.datetime.now()))
+        registro=doc.similaridad(pregunta_2)
+        for r in registro:
+            for s in r:
+                text.append(s)
+        print('Fin Iteracion DOC: ' + str(datetime.datetime.now()))
     text=sorted(text, key=lambda text: text[1], reverse=True)
-    #text2=sorted(text2, key=lambda text2: text2[1], reverse=True)
-    t = tuple(x[0] for x in text)
-    #t2 = tuple(x[0] for x in text2)
-    #text=reader.localizar(pregunta)
+    linea=[]
+    print('Inicio Iteracion tuplas: ' + str(datetime.datetime.now()))
+    for tupla in text[:5]:
+        linea.append([tupla[0],tupla[1],tupla[2]])
 
-    return render_template('resultados.html',  resps=respuestas, entries=t, question=pregunta)
+    print('Fin Iteracion tuplas: ' + str(datetime.datetime.now()))
+    return render_template('resultados.html',  resps=respuestas, entries=linea, question=pregunta)
 
 @app.route('/graph/')
 def home():
     """ Simply serve our chart page """
     return render_template('chart1.html')
 
+
+@app.route("/datacloud/")
+def data():
+    s=stats()
+    result=s.get_data_cloud()
+    return jsonify(result)
+
+
+@app.route('/graphcloud/')
+def graphcloud():
+    s=stats()
+    result=s.get_data_cloud()
+    return render_template('cloud.html', output=result)
 
 def redirect_url(default='index'):
     return request.args.get('next') or \
@@ -148,3 +188,4 @@ if __name__ == '__main__':
     admin = Admin(app, name='Takesi: Corpus', template_mode='bootstrap3')
     admin.add_view(CorpusView(db.DOCS,"Corpus"))
     app.run(debug=True)
+

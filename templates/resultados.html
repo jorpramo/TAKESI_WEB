@@ -10,11 +10,15 @@
  Resultados: {{ question }}
  <div id="results">
  <p class="entries">
-  {% for entry in entries %}
-     {% for line in entry %}
-     {{ line }}<br>
+  {% for item in entries %}
+      <div class="documento"> {{ item[2] }} </div>
+      <div class="score">{{ item[1] }}</div><br>
+        {% for line in item[0] %}
+            <div class="texto">{{ line }}</div>
+        {% endfor %}
+     <br>
 
-        {% endfor %}<br>
+
   {% else %}
     <em>No hay respuestas coincidentes</em>
   {% endfor %}
@@ -22,11 +26,14 @@
 <br><br>
 <br><br>
 Documentos más cercanos a la búsqueda:
+
+
 <ul class="entries">
   {% for resp in resps %}
     <a href="/doc/{{resp._id}}">{{ resp.nombre }}</a>  <div id="score">({{resp.score}})</div>
-    <div id="pos"> <a href="/doc/pos/{{resp._id}}">Positivo</a></div>
-    <div id="neg"> <a href="/doc/neg/{{resp._id}}">Falso</a></div>
+
+    <div class="voto" id="pos"> <a href="/doc/pos/{{resp._id}}">Positivo</a></div>
+    <div class="voto" id="neg"> <a href="/doc/neg/{{resp._id}}">Falso</a></div>
   {% else %}
     <em>No hay documentos coincidentes</em>
   {% endfor %}
@@ -37,6 +44,7 @@ Documentos más cercanos a la búsqueda:
     Takesi. Aplicación de búsqueda
   </div>
 </div>
+
 
 </body>
 </html>
