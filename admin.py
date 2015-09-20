@@ -92,6 +92,7 @@ def pos_doc(id):
 
 @app.route('/listadoc/<cadena>')
 def listadoc(cadena):
+    print(cadena)
     cadena=cadena.lower()
     client = pymongo.MongoClient(set.MONGODB_URI)
     db = client.docs
@@ -99,12 +100,19 @@ def listadoc(cadena):
     result=DOC.find({ "$text": { "$search": cadena, "$language": "es"}}, {"_id":0, "nombre": 1, "score": { "$meta":"textScore"}}).sort([('score', {'$meta': 'textScore'})])
     tags=db.DOCS.aggregate([{"$match": {"tags_vocab":cadena}},{"$group":{"_id":"$nombre","total":{"$sum":1}}}])
     resultado=[]
+
     for t in tags:
-        if t.nombre in [s for s in result['nombre']]
-        resultado.append([t._id,t.nombre,totales[t.nombre]])
-    data=dumps(list(resultado))
+        score=0
+        result.rewind()
+        for s in result:
+            if s["nombre"]==t["_id"]:
+                score=s['score']
+        resultado.append([t["_id"],score])
+
+    resultado=sorted(resultado, key=lambda resultado: resultado[1], reverse=True)
+    data=dumps(resultado)
     print(data)
-    return 1
+    return data
 
 @app.route('/doc/<id>')
 def show_doc(id):

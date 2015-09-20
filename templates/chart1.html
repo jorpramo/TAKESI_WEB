@@ -38,20 +38,26 @@ $(document).ready(function(){
         $('#chart2').bind('jqplotDataClick',
             function (ev, seriesIndex, pointIndex, data) {
                 $('#info1').html('series: '+seriesIndex+', point: '+pointIndex+', data: '+data+', ticks: '+ ticks[pointIndex] );
-                actualiza_documentos(ticks[pointIndex])
+                actualiza_documentos(ticks[pointIndex]);
 
             }
         );
     });
 function actualiza_documentos(cadena) {
+console.log("dentro");
 $.getJSON('/listadoc/' + cadena,function (json) {
+        console.log(json.length);
+        console.log(json);
+        $("#tabla tr").remove();
+        $('#tabla').append("<tr><th>Documento</th><th>Peso</th></tr>")
         var tr;
         for (var i = 0; i < json.length; i++) {
-            tr = $('<tr/>');
-            tr.append("<td>" + json[i].User_Name + "</td>");
-            tr.append("<td>" + json[i].score + "</td>");
-            tr.append("<td>" + json[i].team + "</td>");
-            $('documentos#table').append(tr);
+            tr=$('<tr>');
+            tr.append("<td>" + json[i][0] + "</td>");
+            tr.append("<td>" + json[i][1] + "</td>");
+            $('#tabla').append(tr);
+            console.log("dentro");
+
         }
     });
 
@@ -63,7 +69,7 @@ $.getJSON('/listadoc/' + cadena,function (json) {
 <div><span>You Clicked: </span><span id="info1">Nothing yet</span></div>
 <div id="chart2" style="height:500px;width:1000px;"></div>
 <div id="documentos" style="height:500px;width:800px;">
-    <table>
+    <table id="tabla">
 
     </table>
 
