@@ -6,13 +6,13 @@ import Documento
 import settings as set
 from Utils import utilidades
 from flask import Flask, redirect, request, url_for
-from flask import render_template, jsonify
+from flask import render_template
 from flask_admin import Admin
 import flask_admin as admin
 from wtforms import form, fields
-from flask_admin.contrib.pymongo import ModelView, filters
+from flask_admin.contrib.pymongo import ModelView
 from bson.objectid import ObjectId
-from bson.son import SON
+
 import datetime
 from estadisticas import stats
 from bson.json_util import dumps
