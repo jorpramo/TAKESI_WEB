@@ -19,9 +19,14 @@ class stats(object):
         for doc in result.find().sort('value', pymongo.DESCENDING).limit(100):
             words.append([doc['_id'], doc['value']])
         return words
-'''
-s=stats()
-i=s.get_data_cloud()
-print(i)
-'''
+
+    def get_data_mapa(self):
+
+        result = self.collection.find().distinct("f1")
+        label=[]
+        for record in result:
+            label.append(record)
+        return  label
+
+
 

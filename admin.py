@@ -174,18 +174,19 @@ def home():
     return render_template('chart1.html')
 
 
-@app.route("/datacloud/")
-def data():
-    s=stats()
-    result=s.get_data_cloud()
-    return jsonify(result)
-
-
 @app.route('/graphcloud/')
 def graphcloud():
     s=stats()
     result=s.get_data_cloud()
     return render_template('cloud.html', output=result)
+
+@app.route('/graphmap/')
+def graphmap():
+    s=stats(collection="SIMILITUD")
+    result=s.get_data_mapa()
+    return render_template('mapacalor.html', labels=result)
+
+
 
 def redirect_url(default='index'):
     return request.args.get('next') or \
