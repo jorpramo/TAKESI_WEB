@@ -1,5 +1,8 @@
-__author__ = 'jpradas'
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
+__author__ = 'jpradas'
+
+
 
 import nltk.corpus
 from nltk.stem.porter import PorterStemmer
