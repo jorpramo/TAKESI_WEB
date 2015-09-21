@@ -16,7 +16,7 @@ class stats(object):
         reduce = Code("function(key, values) { return Array.sum(values);};")
         result = self.collection.map_reduce(map, reduce, "myresults")
         words=[]
-        for doc in result.find().sort('value', pymongo.DESCENDING).limit(100):
+        for doc in result.find().sort('value', pymongo.DESCENDING).limit(200):
             words.append([doc['_id'], doc['value']])
         return words
 

@@ -17,7 +17,7 @@ var fill = d3.scale.category20();
 var layout = d3.layout.cloud()
     .size([1500, 1500])
     .words(array.map(function(d) {
-      return {text: d[0], size: d[1]*0.2, test: "haha"};
+      return {text: d[0], size: d[1]*0.05, test: "haha"};
     }))
     .padding(5)
     .rotate(function() { return ~~(Math.random() * 2) * 90; })
