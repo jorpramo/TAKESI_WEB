@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
 __author__ = 'jpradas'
 
-import sys
-import codecs
-import nltk
 import math
 import pymongo
-import datetime
 import settings as set
 from nltk.text import TextCollection
+from bson.objectid import ObjectId
 
 from Utils import utilidades
 import datetime
@@ -122,7 +119,7 @@ class estados(object):
         self.DOC=db.DOCS
 
     def positivo(self):
-        self.DOC.find_one_and_update({'_id':object(self.id)}, {'$inc': {'pos': 1}, '$set':  {"fecha": datetime.datetime.utcnow()}},upsert=True)
+        self.DOC.update_one({'_id':ObjectId(self.id)}, {'$inc': {'pos': 1}})
 
     def negativo(self):
-        self.DOC.find_one_and_update({'_id':object(self.id)}, {'$inc': {'neg': 1}, '$set':  {"fecha": datetime.datetime.utcnow()}},upsert=True)
+        self.DOC.find_one_and_update({'_id':ObjectId(self.id)},  {'$inc': {'neg': 1}})

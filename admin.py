@@ -35,21 +35,11 @@ def busqueda_resp(pregunta):
     result=DOC.find({ "$text": { "$search": pregunta, "$language": "es"}}, {"_id":1, "nombre": 1,"texto":1,  "score": { "$meta":"textScore"}}).sort([('score', {'$meta': 'textScore'})]).limit(set.TOTAL_DOCUMENTOS)
     return result
 
-
-
 # Create application
 app = Flask(__name__)
 # Create dummy secrey key so we can use sessions
 app.config['SECRET_KEY'] = '123456790'
 
-
-client = pymongo.MongoClient(set.MONGODB_URI)
-db = client.docs
-DOCS=db.docs
-
-reader = mongodb.MongoDBCorpusReader()
-writer = mongodb.MongoDBPreguntas()
-bw = mongodb.BagWords()
 
 # User admin
 class InnerForm(form.Form):
@@ -140,6 +130,7 @@ def estadisticas():
 
 @app.route('/busqueda', methods=['POST'])
 def busqueda():
+    writer = mongodb.MongoDBPreguntas()
     print('Inicio: ' + str(datetime.datetime.now()))
     pregunta=request.form['text']
     pregunta_2=utilidades.SinStopwords(pregunta)
@@ -196,6 +187,8 @@ def redirect_url(default='index'):
 
 if __name__ == '__main__':
     admin = Admin(app, name='Takesi: Corpus', template_mode='bootstrap3')
+    client = pymongo.MongoClient(set.MONGODB_URI)
+    db = client.docs
     admin.add_view(CorpusView(db.DOCS,"Corpus"))
     app.run(debug=True)
 
