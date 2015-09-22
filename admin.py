@@ -126,7 +126,7 @@ def estadisticas():
     return data
 
 
-@app.route('/busqueda', methods=['POST'])
+@app.route('/busqueda/', methods=['POST'])
 def busqueda():
     writer = mongodb.MongoDBPreguntas()
     pregunta=request.form['text']
