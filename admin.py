@@ -71,14 +71,12 @@ def index():
 def pos_neg(id):
     estado=Documento.estados(id)
     estado.negativo()
-    print("negativo")
     return 'Negativo'
 
 @app.route('/doc/pos/<id>')
 def pos_doc(id):
     estado=Documento.estados(id)
     estado.positivo()
-    print("positivo")
     return 'Positivo'
 
 @app.route('/listadoc/<cadena>')
@@ -131,33 +129,25 @@ def estadisticas():
 @app.route('/busqueda', methods=['POST'])
 def busqueda():
     writer = mongodb.MongoDBPreguntas()
-    print('Inicio: ' + str(datetime.datetime.now()))
     pregunta=request.form['text']
     pregunta_2=utilidades.SinStopwords(pregunta)
     pregunta_2=utilidades.Stemming(pregunta_2)
-    print('Fin ofrmateo pregunta: ' + str(datetime.datetime.now()))
     writer.inserta_pregunta(pregunta_2)
-    print('Fin insercion pregunta: ' + str(datetime.datetime.now()))
+
     respuestas=busqueda_resp(pregunta_2)
-    print('Fin busq respuestas 1: ' + str(datetime.datetime.now()))
     docs=respuestas.clone()
     text=[]
-    text2=[]
     for d in docs:
         doc=Documento.Document(d)
-        print('Inicio Iteracion DOC: ' + str(datetime.datetime.now()))
         registro=doc.similaridad(pregunta_2)
         for r in registro:
             for s in r:
                 text.append(s)
-        print('Fin Iteracion DOC: ' + str(datetime.datetime.now()))
     text=sorted(text, key=lambda text: text[1], reverse=True)
     linea=[]
-    print('Inicio Iteracion tuplas: ' + str(datetime.datetime.now()))
     for tupla in text[:5]:
         linea.append([tupla[0],tupla[1],tupla[2]])
 
-    print('Fin Iteracion tuplas: ' + str(datetime.datetime.now()))
     return render_template('resultados.html',  resps=respuestas, entries=linea, question=pregunta)
 
 @app.route('/graph/')
@@ -190,5 +180,5 @@ if __name__ == '__main__':
     client = pymongo.MongoClient(set.MONGODB_URI)
     db = client.docs
     admin.add_view(CorpusView(db.DOCS,"Corpus"))
-    app.run(debug=True)
+    app.run()
 

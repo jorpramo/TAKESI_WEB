@@ -12,7 +12,7 @@ import datetime
 
 class Document(object):
     def __init__(self, result):
-        print('Inicio: ' + str(datetime.datetime.now()))
+
         self.id=result['_id']
         self.nombre = result['nombre']
         self.score = result['score']
@@ -21,21 +21,19 @@ class Document(object):
         parrafo=[]
         total=[]
         lines=[s for s in lines if len(s)>20]
-        print('Fin lineas: ' + str(datetime.datetime.now()))
+
         for l in range(len(lines)):
             parrafo.append(lines[l])
             if l%5 == 0:
                 total.append(parrafo)
                 parrafo=[]
         total.append(parrafo)
-        print('Fin Parrafo: ' + str(datetime.datetime.now()))
+
         self.sents = total
         self.texto = result['texto']
         self.totalsentencias = 0
         self.sentenciascontermino = 0
-        print('Fin asignacion: ' + str(datetime.datetime.now()))
         self.encontrado()
-        print('Fin actualizacion: ' + str(datetime.datetime.now()))
 
     #def cargadoc(self, cursor):
     #    for x in cursor:
