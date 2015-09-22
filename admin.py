@@ -5,6 +5,8 @@ import pymongo
 import mongodb
 import Documento
 import settings as set
+import sys
+import logging
 from Utils import utilidades
 from flask import Flask, redirect, request, url_for
 from flask import render_template
@@ -39,7 +41,8 @@ def busqueda_resp(pregunta):
 app = Flask(__name__)
 # Create dummy secrey key so we can use sessions
 app.config['SECRET_KEY'] = '123456790'
-
+app.logger.addHandler(logging.StreamHandler(sys.stdout))
+app.logger.setLevel(logging.ERROR)
 
 # User admin
 class InnerForm(form.Form):
