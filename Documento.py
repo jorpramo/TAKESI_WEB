@@ -48,11 +48,11 @@ class Document(object):
             resultado.append([s,self.calcula_similaridad(s,pregunta)])
 
         try:
-            IDF=math.log(self.totalsentencias / (self.sentenciascontermino))
+            IDF=math.log(self.totalsentencias / (1 + (self.sentenciascontermino)))
         except:
             print("Division por cero")
         for row in resultado:
-            row[1]=row[1]/IDF
+            row[1]=row[1]*IDF # No seria multiplicacion
         registro=[]
         resultado=sorted(resultado, key=lambda res: res[1],reverse=True)
         final=resultado[:3]
@@ -82,7 +82,7 @@ class Document(object):
         if (score>0):
             self.sentenciascontermino=self.sentenciascontermino+1
         # Weight score by rank
-        score = score * rank
+        #score = score * rank
         return TF
 
 

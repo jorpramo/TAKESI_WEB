@@ -84,7 +84,6 @@ def pos_doc(id):
 
 @app.route('/listadoc/<cadena>')
 def listadoc(cadena):
-    print(cadena)
     cadena=cadena.lower()
     client = pymongo.MongoClient(set.MONGODB_URI)
     db = client.docs
@@ -133,6 +132,7 @@ def estadisticas():
 def busqueda():
     writer = mongodb.MongoDBPreguntas()
     pregunta=request.form['text']
+    pregunta=pregunta.lower()
     pregunta_2=utilidades.SinStopwords(pregunta)
     pregunta_2=utilidades.Stemming(pregunta_2)
     writer.inserta_pregunta(pregunta_2)
