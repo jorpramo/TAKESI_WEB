@@ -1,4 +1,8 @@
 __author__ = 'Jorge'
 
 TOTAL_DOCUMENTOS=3
+TOTAL_RESPUESTAS=3
+TOTAL_LINEAS=5
+SIZE_PARRAFOS=200
+MINIMO_LINEAS=25
 MONGODB_URI = 'mongodb://takesibatch:takesi2015@ds053439.mongolab.com:53439/docs'

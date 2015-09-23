@@ -22,6 +22,30 @@
   {% else %}
     <em>No hay respuestas coincidentes</em>
   {% endfor %}
+     <br>Segundo proceso tdidf NLTK<br>
+     {% for item in entries2 %}
+      <div class="documento"> {{ item[2] }} </div>
+      <div class="score">{{ item[1] }}</div><br>
+        {% for line in item[0] %}
+            <div class="texto">{{ line }}</div>
+        {% endfor %}
+     <br>
+       {% else %}
+    <em>No hay respuestas coincidentes</em>
+  {% endfor %}
+
+     <br>Algoritmo Cosine<br>
+     {% for item in entries3 %}
+      <div class="documento"> {{ item[2] }} </div>
+      <div class="score">{{ item[1] }}</div><br>
+        {% for line in item[0] %}
+            <div class="texto">{{ line }}</div>
+        {% endfor %}
+     <br>
+
+  {% else %}
+    <em>No hay respuestas coincidentes</em>
+  {% endfor %}
 </p>
 <br><br>
 <br><br>
