@@ -1,0 +1,29 @@
+<html>
+<meta charset="utf-8">
+<style>
+
+
+</style>
+<body>
+<div id="bloque" style="position: absolute; left:500px; top:10px; width: 800px; height: 650px;">
+<div id="logo" align="center" > <img src="./static/logo.jpg" height="100" width="80"></img></div>
+ Resultados: {{ question }}
+ <div id="results">
+ <ul class="entries">
+  {% for result in results %}
+    
+	{{result['texto']}}
+  {% else %}
+    <li><em>No se encontró el texto</em>
+  {% endfor %}
+</ul>
+
+<a href="/">Volver</a>
+</div>
+  <div class="footer" align="center" style="position: relative; top:200px;">
+    Takesi. Aplicación de búsqueda
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,30 @@
+<html>
+<meta charset="utf-8">
+
+<head>
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="/static/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <script src="/static/jqplot/jquery.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div id="bloque" style="position: absolute; left:500px; top:100px; width: 400px; height: 650px;">
+<div id="logo" align="center" > <img src="./static/logo.jpg" height="200" width="160"></img></div>
+<div id="busquedas" align="center" > 
+		<form action="{{ url_for('busqueda') }}" method="post">
+          <p><input type="text" name="text" size="60"><!--
+          --><input type="submit" class="btn btn-lg btn-success" value="Consultar">
+        </form></div>
+<div id="menu">
+<a href="/admin/">Admin</a>
+<a href="/graph/">Distribucion de TAGS</a>
+    <a href="/graphcloud/">Graficas Nube</a>
+    <a href="/graphmap/">Similitud documentos</a>
+</div>
+  <div class="footer" align="center" style="position: relative; top:200px;">
+    Takesi. Aplicación de búsqueda
+  </div>
+</div>
+
+</body>
+</html>

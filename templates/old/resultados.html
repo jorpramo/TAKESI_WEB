@@ -1,0 +1,74 @@
+<html>
+<meta charset="utf-8">
+<style>
+
+
+</style>
+<body>
+<div id="bloque" style="position: absolute; left:500px; top:10px; width: 800px; height: 650px;">
+<div id="logo" align="center" > <img src="/static/logo.jpg" height="100" width="80"></img></div>
+ Resultados: {{ question }}
+ <div id="results">
+ <p class="entries">
+  {% for item in entries %}
+      <div class="documento"> {{ item[2] }} </div>
+      <div class="score">{{ item[1] }}</div><br>
+        {% for line in item[0] %}
+            <div class="texto">{{ line }}</div>
+        {% endfor %}
+     <br>
+
+
+  {% else %}
+    <em>No hay respuestas coincidentes</em>
+  {% endfor %}
+     <br>Segundo proceso tdidf NLTK<br>
+     {% for item in entries2 %}
+      <div class="documento"> {{ item[2] }} </div>
+      <div class="score">{{ item[1] }}</div><br>
+        {% for line in item[0] %}
+            <div class="texto">{{ line }}</div>
+        {% endfor %}
+     <br>
+       {% else %}
+    <em>No hay respuestas coincidentes</em>
+  {% endfor %}
+
+     <br>Algoritmo Cosine<br>
+     {% for item in entries3 %}
+      <div class="documento"> {{ item[2] }} </div>
+      <div class="score">{{ item[1] }}</div><br>
+        {% for line in item[0] %}
+            <div class="texto">{{ line }}</div>
+        {% endfor %}
+     <br>
+
+  {% else %}
+    <em>No hay respuestas coincidentes</em>
+  {% endfor %}
+</p>
+<br><br>
+<br><br>
+Documentos más cercanos a la búsqueda:
+
+
+<ul class="entries">
+  {% for resp in resps %}
+    <a href="/doc/{{resp._id}}">{{ resp.nombre }}</a>  <div id="score">({{resp.score}})</div>
+
+    <div class="voto" id="pos"> <a href="/doc/pos/{{resp._id}}">Positivo</a></div>
+    <div class="voto" id="neg"> <a href="/doc/neg/{{resp._id}}">Falso</a></div>
+  {% else %}
+    <em>No hay documentos coincidentes</em>
+  {% endfor %}
+</ul>
+<a href="/">Volver</a>
+</div>
+  <div class="footer" align="center" style="position: relative; top:200px;">
+    Takesi. Aplicación de búsqueda
+  </div>
+</div>
+
+
+</body>
+</html>
