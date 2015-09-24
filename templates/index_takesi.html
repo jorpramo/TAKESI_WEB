@@ -4,13 +4,13 @@
 
       <!-- Jumbotron -->
       <div class="jumbotron">
-        <h1>Takesi</h1>
+
         <img src="./static/logo.jpg" height="200" width="160"></img>
         <p class="lead">Aplicación de búsqueda sobre un Corpus de documentos</p>
         <p><div id="busquedas" align="center" >
 		<form action="{{ url_for('busqueda') }}" method="post">
-          <p><input type="text" name="text" size="60"><!--
-          --><input type="submit" class="btn btn-lg btn-success" value="Consultar">
+          <p><input type="text" name="text" size="60"></p>
+          <p><input type="submit" class="btn btn-lg btn-success" value="Consultar"></p>
         </form></div></p>
       </div>
 
