@@ -127,6 +127,17 @@ def estadisticas():
 
     return data
 
+@app.route('/statsvotos/')
+def estadisticasvotos():
+
+    client = pymongo.MongoClient(set.MONGODB_URI)
+    db = client.docs
+    DOC=db.DOCS
+    result=DOC.find({},{"nombre":1,'num_words':1, 'enc':1, 'pos':1, 'neg':1,'_id':0})
+    data=dumps(list(result))
+
+    return data
+
 
 @app.route('/busqueda/', methods=['POST'])
 def busqueda():
@@ -184,12 +195,9 @@ def graph():
     result=s.get_data_cloud()
     return render_template('chart1.html', output=result)
 
-
-@app.route('/graphcloud/')
-def graphcloud():
-    s=stats()
-    result=s.get_data_cloud()
-    return render_template('cloud.html', output=result)
+@app.route('/graphbusq/')
+def graphbusq():
+    return render_template('chart2.html')
 
 @app.route('/corpus/')
 def corpus():

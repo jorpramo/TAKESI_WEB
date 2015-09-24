@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block body %}
+<script language="javascript" type="text/javascript" src="../static/jqplot/jquery.min.js"></script>
+<script language="javascript" type="text/javascript" src="../src/plugins/jqplot.bubbleRenderer.js"></script>
+<script language="javascript" type="text/javascript" src="../static/jqplot/jquery.jqplot.min.js"></script>
+<link rel="stylesheet" type="text/css" href="../static/jqplot/jquery.jqplot.css" />
+<script type="text/javascript">
+$(document).ready(function(){
+        $.jqplot.config.enablePlugins = true;
+
+        $.getJSON('/statsvotos/',function (data) {
+		var array = [];
+		for (var i=0; i<data.length; i++) {
+		    array.push([data[i].pos, data[i].neg, data[i].enc, data[i].nombre])
+		}
+
+        plot1 = $.jqplot('chart2',array,{
+        title: 'Estadísticas de Búsquedas',
+        seriesDefaults:{
+            renderer: $.jqplot.BubbleRenderer,
+            rendererOptions: {
+                bubbleAlpha: 0.6,
+                highlightAlpha: 0.8
+            },
+            shadow: true,
+            shadowAlpha: 0.05
+        }
+        });
+
+        $('#chart2').bind('jqplotDataClick',
+            function (ev, seriesIndex, pointIndex, data) {
+                actualiza_documentos(ticks[pointIndex]);
+            }
+        );
+    });
+    });
+function actualiza_documentos(cadena) {
+    console.log("dentro");
+    $.getJSON('/listadoc/' + cadena,function (json) {
+        console.log(json.length);
+        console.log(json);
+        $("#tabla tr").remove();
+        $('#tabla').append("<tr><th>Documento</th><th>Peso</th></tr>")
+        var tr;
+        for (var i = 0; i < json.length; i++) {
+            tr=$('<tr>');
+            tr.append("<td>" + json[i][0] + "</td>");
+            tr.append("<td>" + json[i][1] + "</td>");
+            $('#tabla').append(tr);
+            console.log("dentro");
+        }
+    });
+}
+</script>
+
+ <div class="row">
+     <div class="col-lg-6">
+    <div id="chart2"></div>
+
+    <div id="documentos" >
+        <table id="tabla" class="table table-striped" data-sort-name="Nombre" data-sort-order="desc">>
+
+        </table>
+
+    </div>
+    </div>
+
+          </div>
+
+
+
+
+
+{% endblock %}

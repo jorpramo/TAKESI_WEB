@@ -9,7 +9,6 @@
 <script language="javascript" type="text/javascript" src="../static/jqplot/plugins/jqplot.categoryAxisRenderer.min.js" ></script>
 <link rel="stylesheet" type="text/css" href="../static/jqplot/jquery.jqplot.css" />
 <script type="text/javascript">
-
 $(document).ready(function(){
         $.jqplot.config.enablePlugins = true;
 		var s1 = [];
@@ -38,9 +37,7 @@ $(document).ready(function(){
      
         $('#chart2').bind('jqplotDataClick',
             function (ev, seriesIndex, pointIndex, data) {
-
                 actualiza_documentos(ticks[pointIndex]);
-
             }
         );
     });
@@ -58,10 +55,8 @@ $.getJSON('/listadoc/' + cadena,function (json) {
             tr.append("<td>" + json[i][1] + "</td>");
             $('#tabla').append(tr);
             console.log("dentro");
-
         }
     });
-
 }
 </script>
 
@@ -85,11 +80,8 @@ array=[]
 {% for item in output %}
     array.push(['{{item[0]}}',{{item[1]}}]);
 {% endfor %}
-
 (function() {
-
 var fill = d3.scale.category20();
-
 var layout = d3.layout.cloud()
     .size([500 , 500])
     .words(array.map(function(d) {
@@ -100,9 +92,7 @@ var layout = d3.layout.cloud()
     .font("Impact")
     .fontSize(function(d) { return d.size/2; })
     .on("end", draw);
-
 layout.start();
-
 function draw(words) {
   d3.select("#cloud").append("svg")
       .attr("width", layout.size()[0])
@@ -121,9 +111,7 @@ function draw(words) {
       })
       .text(function(d) { return d.text; });
 }
-
 })();
-
 </script>
           </div>
      </div>
