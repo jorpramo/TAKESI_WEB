@@ -1,75 +1,105 @@
 {% extends "base.html" %}
 
 {% block body %}
-<script language="javascript" type="text/javascript" src="../static/jqplot/jquery.min.js"></script>
-<script language="javascript" type="text/javascript" src="../src/plugins/jqplot.bubbleRenderer.js"></script>
-<script language="javascript" type="text/javascript" src="../static/jqplot/jquery.jqplot.min.js"></script>
+<script language="javascript" type="text/javascript" src="/static/jqplot/jquery.min.js"></script>
+<script language="javascript" type="text/javascript" src="/static/jqplot/jquery.jqplot.min.js"></script>
+<script language="javascript" type="text/javascript" src="/static/jqplot/plugins/jqplot.bubbleRenderer.js"></script>
+<script type="text/javascript" src="/static/jqplot/plugins/plugins/jqplot.canvasAxisLabelRenderer.min.js"></script>
 <link rel="stylesheet" type="text/css" href="../static/jqplot/jquery.jqplot.css" />
+<style>
+        #tooltip1b {
+        font-size: 12px;
+        color: rgb(15%, 15%, 15%);
+        padding:2px;
+        background-color: rgba(95%, 95%, 95%, 0.8);
+    }
+</style>
+
 <script type="text/javascript">
 $(document).ready(function(){
         $.jqplot.config.enablePlugins = true;
 
-        $.getJSON('/statsvotos/',function (data) {
+         $.getJSON('/statsvotos/',function (data) {
 		var array = [];
 		for (var i=0; i<data.length; i++) {
 		    array.push([data[i].pos, data[i].neg, data[i].enc, data[i].nombre])
 		}
 
-        plot1 = $.jqplot('chart2',array,{
-        title: 'Estadísticas de Búsquedas',
+
+
+        plot1b = $.jqplot('chart2',[array],{
+        title: 'Estadistica sobre los documentos',
+       height: 600,
+
         seriesDefaults:{
             renderer: $.jqplot.BubbleRenderer,
             rendererOptions: {
                 bubbleAlpha: 0.6,
-                highlightAlpha: 0.8
+                highlightAlpha: 0.8,
+                showLabels: false
             },
             shadow: true,
             shadowAlpha: 0.05
+        },
+        axes:{
+        xaxis:{
+          label:'Votos Positivos'
+        },
+        yaxis:{
+          label:'Votos Negativos'
         }
+      }
+
+    });
+
+    // Legend is a simple table in the html.
+    // Now populate it with the labels from each data value.
+    $.each(array, function(index, val) {
+        $('#tabla').append('<tr><td>'+val[3]+'</td><td>'+val[2]+'</td></tr>');
+    });
+
+    // Now bind function to the highlight event to show the tooltip
+    // and highlight the row in the legend.
+    $('#chart2').bind('jqplotDataHighlight',
+        function (ev, seriesIndex, pointIndex, data, radius) {
+            var chart_left = $('#chart2').offset().left,
+                chart_top = $('#chart2').offset().top,
+                x = plot1b.axes.xaxis.u2p(data[0]),  // convert x axis unita to pixels on grid
+                y = plot1b.axes.yaxis.u2p(data[1]);  // convert y axis units to pixels on grid
+            var color = 'rgb(50%,50%,100%)';
+            $('#tooltip1b').css({left:chart_left+x+radius+5, top:chart_top+y});
+            $('#tooltip1b').html('<span style="font-size:14px;font-weight:bold;color:'+color+';">' +
+            data[3] + '</span><br />' + 'Positivo: '+data[0] + '<br />' + 'Negativo: ' +
+            data[1] + '<br />' + 'Encontrado: ' + data[2]);
+            $('#tooltip1b').show();
+            $('#tabla tr').css('background-color', '#ffffff');
+            $('#tabla tr').eq(pointIndex+1).css('background-color', color);
         });
 
-        $('#chart2').bind('jqplotDataClick',
-            function (ev, seriesIndex, pointIndex, data) {
-                actualiza_documentos(ticks[pointIndex]);
-            }
-        );
+    // Bind a function to the unhighlight event to clean up after highlighting.
+    $('#chart1b').bind('jqplotDataUnhighlight',
+        function (ev, seriesIndex, pointIndex, data) {
+            $('#tooltip1b').empty();
+            $('#tooltip1b').hide();
+            $('#tabla tr').css('background-color', '#ffffff');
+        });
+
     });
     });
-function actualiza_documentos(cadena) {
-    console.log("dentro");
-    $.getJSON('/listadoc/' + cadena,function (json) {
-        console.log(json.length);
-        console.log(json);
-        $("#tabla tr").remove();
-        $('#tabla').append("<tr><th>Documento</th><th>Peso</th></tr>")
-        var tr;
-        for (var i = 0; i < json.length; i++) {
-            tr=$('<tr>');
-            tr.append("<td>" + json[i][0] + "</td>");
-            tr.append("<td>" + json[i][1] + "</td>");
-            $('#tabla').append(tr);
-            console.log("dentro");
-        }
-    });
-}
+
+
 </script>
-
+<div style="position:absolute;z-index:99;display:none;" id="tooltip1b"></div>
  <div class="row">
-     <div class="col-lg-6">
-    <div id="chart2"></div>
+     <div class="col-lg-8">
+    <div id="chart2" style="height, 800"></div>
+</div>
+    <div class="col-lg-4">
 
-    <div id="documentos" >
-        <table id="tabla" class="table table-striped" data-sort-name="Nombre" data-sort-order="desc">>
+        <table  class="table table-striped" id="tabla"></table></div>
 
-        </table>
 
     </div>
-    </div>
-
-          </div>
-
-
-
 
 
 {% endblock %}

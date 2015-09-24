@@ -133,7 +133,8 @@ def estadisticasvotos():
     client = pymongo.MongoClient(set.MONGODB_URI)
     db = client.docs
     DOC=db.DOCS
-    result=DOC.find({},{"nombre":1,'num_words':1, 'enc':1, 'pos':1, 'neg':1,'_id':0})
+    result=DOC.find({},{"nombre":1, 'enc':1, 'pos':1, 'neg':1,'_id':0},{"$sort":{"enc":-1}})
+
     data=dumps(list(result))
 
     return data
