@@ -179,9 +179,10 @@ def busqueda():
     return render_template('resultados.html',  resps=respuestas, entries=linea, entries2=linea2, entries3=linea3,question=pregunta)
 
 @app.route('/graph/')
-def home():
-    """ Simply serve our chart page """
-    return render_template('chart1.html')
+def graph():
+    s=stats()
+    result=s.get_data_cloud()
+    return render_template('chart1.html', output=result)
 
 
 @app.route('/graphcloud/')
@@ -189,6 +190,14 @@ def graphcloud():
     s=stats()
     result=s.get_data_cloud()
     return render_template('cloud.html', output=result)
+
+@app.route('/corpus/')
+def corpus():
+    client = pymongo.MongoClient(set.MONGODB_URI)
+    db = client.docs
+    DOC=db.DOCS
+    result=DOC.find({},{"nombre":1,'num_words':1, 'enc':1, 'pos':1, 'neg':1,'_id':0})
+    return render_template('corpus.html', output=result)
 
 @app.route('/graphmap/')
 def graphmap():

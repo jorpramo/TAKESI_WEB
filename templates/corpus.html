@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<table class="table table-striped" data-sort-name="Nombre" data-sort-order="desc">
+ <thead><tr>
+    <th data-field="Nombre" data-sortable="true">Nombre</th>
+    <th data-sortable="true">Palabras</th>
+    <th data-sortable="true">Encontrado</th>
+    <th data-sortable="true">Votos Positivos</th>
+    <th data-sortable="true">Votos Negativos</th>
+ </tr>
+    </thead>
+    <tbody>
+  {% for row in output %}
+    <tr>
+     <td>{{row.nombre}}</td><td>{{row.num_words}}</td><td>{{row.enc}}</td><td>{{row.pos}}</td><td>{{row.neg}}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

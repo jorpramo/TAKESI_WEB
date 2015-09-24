@@ -1,8 +1,7 @@
-<!DOCTYPE html>
-<meta charset="utf-8">
-<html>
-  <head>
-    <style>
+{% extends "base.html" %}
+
+{% block body %}
+<style>
       rect.bordered {
         stroke: #E6E6E6;
         stroke-width:2px;   
@@ -23,17 +22,28 @@
       }
     </style>
     <script src="http://d3js.org/d3.v3.js"></script>
-  </head>
-  <body>
-    <div id="marcador">
-        <p id="Fichero1"></p>
-        <p id="Fichero2"></p>
-        <p id="Similitud"></p>
 
-    </div>
+       <div class="row">
+          <div class="col-lg-8">
     <div id="chart"></div>
-    <div id="tabla" style="position: absolute; left: 1050px; top: 75px;"></div>
 
+
+
+
+        <h4>Fichero:</h4><p id="Fichero1"></p>
+        <h4>Fichero:</h4><p id="Fichero2"></p>
+        <h4>Similitud:</h4> <p id="Similitud"></p>
+
+
+
+
+          </div>
+              <div class="col-lg-4">
+        <table id="tabla" class="table table-striped" data-sort-name="Nombre" data-sort-order="desc">>
+
+        </table>
+              </div>
+           </div>
 
     <script type="text/javascript">
 
@@ -48,10 +58,10 @@
     var etiqueta = d3.select("body").append("svg").attr("width",100).attr("height",30);
 
 
-      var margin = { top: 50, right: 0, bottom: 100, left: 100 },
-          width = 1000 - margin.left - margin.right,
-          height = 1200 - margin.top - margin.bottom,
-          gridSize = Math.floor(width / label.length),
+      var margin = { top: 20, right: 0, bottom: 100, left: 20 },
+          width = 700 - margin.left - margin.right,
+          height = 700 - margin.top - margin.bottom,
+          gridSize = Math.floor(width / (label.length)),
           legendElementWidth = gridSize*2,
           buckets = 9,
           colors = ["#ffffd9","#edf8b1","#c7e9b4","#7fcdbb","#41b6c4","#1d91c0","#225ea8","#253494","#081d58"], // alternatively colorbrewer.YlGnBu[9]
@@ -76,7 +86,7 @@
 
           var svg = d3.select("#chart").append("svg")
               .attr("width", width + margin.left + margin.right)
-              .attr("height", height + margin.top + margin.bottom)
+              .attr("height", height + margin.top + margin.bottom +50)
               .append("g")
               .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -103,8 +113,8 @@
           var heatMap = svg.selectAll(".hour")
               .data(data)
               .enter().append("rect")
-              .attr("x", function(d) { return (label.indexOf(d.hour) ) * gridSize; })
-              .attr("y", function(d) { return (label.indexOf(d.day) ) * gridSize; })
+              .attr("x", function(d) { return margin.left + ((label.indexOf(d.hour) ) * gridSize); })
+              .attr("y", function(d) { return margin.top + ((label.indexOf(d.day) ) * gridSize); })
               .attr("rx", 4)
               .attr("ry", 4)
               .attr("class", "hour bordered")
@@ -137,25 +147,24 @@
 
           legend.append("rect")
             .attr("x", function(d, i) { return legendElementWidth * i; })
-            .attr("y", height )
+            .attr("y", height + margin.top + margin.bottom )
             .attr("width", legendElementWidth)
             .attr("height", gridSize / 2)
             .style("fill", function(d, i) { return colors[i]; });
 
           legend.append("text")
             .attr("class", "mono")
-            .text(function(d) { return "= " + Math.round(d); })
+            .text(function(d) { console.log(d); return "= " + Math.round(d); })
             .attr("x", function(d, i) { return legendElementWidth * i; })
-            .attr("y", height + gridSize);
+            .attr("y", height + gridSize + margin.top + margin.bottom );
       });
 
       var svg2 = d3.select("#tabla");
-      var table = svg2.append("table").append("thead").append("tbody");
+      var table = svg2.append("thead").append("tbody");
       var tr = table.selectAll("tr")
       .data(label)
         .enter()
         .append("tr").html(function(d, i) { fich="PDF/" + d; return "<td>"+ i +"</td><td>"+ d +"</td>"; })
 
     </script>
-  </body>
-</html>
+{% endblock %}

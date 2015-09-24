@@ -1,74 +1,66 @@
-<html>
-<meta charset="utf-8">
-<style>
+{% extends "base.html" %}
 
+{% block body %}
 
-</style>
-<body>
-<div id="bloque" style="position: absolute; left:500px; top:10px; width: 800px; height: 650px;">
-<div id="logo" align="center" > <img src="/static/logo.jpg" height="100" width="80"></img></div>
- Resultados: {{ question }}
- <div id="results">
- <p class="entries">
-  {% for item in entries %}
-      <div class="documento"> {{ item[2] }} </div>
-      <div class="score">{{ item[1] }}</div><br>
-        {% for line in item[0] %}
-            <div class="texto">{{ line }}</div>
-        {% endfor %}
-     <br>
+      <!-- Jumbotron -->
+      <div class="jumbotron">
+        <h2>Resultados</h2>
+        <p class="lead"> Resultados: {{ question }}</p>
+      </div>
 
+      <!-- Example row of columns -->
 
-  {% else %}
-    <em>No hay respuestas coincidentes</em>
-  {% endfor %}
-     <br>Segundo proceso tdidf NLTK<br>
-     {% for item in entries2 %}
-      <div class="documento"> {{ item[2] }} </div>
-      <div class="score">{{ item[1] }}</div><br>
-        {% for line in item[0] %}
-            <div class="texto">{{ line }}</div>
-        {% endfor %}
-     <br>
-       {% else %}
-    <em>No hay respuestas coincidentes</em>
-  {% endfor %}
+        <div class="row">
+        <div class="col-lg-8">
+            <h3>Primer método</h3>
+                    {% for item in entries %}
+              <h4> Documento: {{ item[2] }} </h4>
+              <h5> Score: {{ item[1] }} </h5>
+              <h4> Respuesta: </h4>
+                {% for line in item[0] %}
+                    {{ line }}
+                {% endfor %}
+           {% else %}
+            <em>No hay respuestas coincidentes</em>
+          {% endfor %}
 
-     <br>Algoritmo Cosine<br>
-     {% for item in entries3 %}
-      <div class="documento"> {{ item[2] }} </div>
-      <div class="score">{{ item[1] }}</div><br>
-        {% for line in item[0] %}
-            <div class="texto">{{ line }}</div>
-        {% endfor %}
-     <br>
+               <h3>Segundo método TFIDF</h3>
+                    {% for item in entries2 %}
+              <h4> Documento: {{ item[2] }} </h4>
+              <h5> Score: {{ item[1] }} </h5>
+              <h4> Respuesta: </h4>
+                {% for line in item[0] %}
+                    {{ line }}
+                {% endfor %}
+           {% else %}
+            <em>No hay respuestas coincidentes</em>
+          {% endfor %}
 
-  {% else %}
-    <em>No hay respuestas coincidentes</em>
-  {% endfor %}
-</p>
-<br><br>
-<br><br>
-Documentos más cercanos a la búsqueda:
+            <h3>Tercer método Distancia Coseno</h3>
+                    {% for item in entries3 %}
+              <h4> Documento: {{ item[2] }} </h4>
+              <h5> Score: {{ item[1] }} </h5>
+              <h4> Respuesta: </h4>
+                {% for line in item[0] %}
+                    {{ line }}
+                {% endfor %}
+           {% else %}
+            <em>No hay respuestas coincidentes</em>
+          {% endfor %}
+        </div>
 
+        <div class="col-lg-4">
+            <h3>Documentos más cercanos a la búsqueda:</h3>
+            {% for resp in resps %}
+            <h4> <a href="/doc/{{resp._id}}">{{ resp.nombre }}</a></h4>    <h5> Score: ({{resp.score}})</h5>
 
-<ul class="entries">
-  {% for resp in resps %}
-    <a href="/doc/{{resp._id}}">{{ resp.nombre }}</a>  <div id="score">({{resp.score}})</div>
+        <p><a class="btn btn-success" href="/doc/pos/{{resp._id}}" role="button">Voto Positivo &raquo;</a></p>
+       <p><a class="btn btn-danger" href="/doc/neg/{{resp._id}}" role="button">Voto Falso &raquo;</a></p>
+      {% else %}
+        <em>No hay documentos coincidentes</em>
+      {% endfor %}
 
-    <div class="voto" id="pos"> <a href="/doc/pos/{{resp._id}}">Positivo</a></div>
-    <div class="voto" id="neg"> <a href="/doc/neg/{{resp._id}}">Falso</a></div>
-  {% else %}
-    <em>No hay documentos coincidentes</em>
-  {% endfor %}
-</ul>
-<a href="/">Volver</a>
-</div>
-  <div class="footer" align="center" style="position: relative; top:200px;">
-    Takesi. Aplicación de búsqueda
-  </div>
-</div>
+        </div>
+            </div>
 
-
-</body>
-</html>
+{% endblock %}

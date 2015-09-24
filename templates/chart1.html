@@ -1,6 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head> 
+{% extends "base.html" %}
+
+{% block body %}
 <script language="javascript" type="text/javascript" src="../static/jqplot/jquery.min.js"></script>
 <script language="javascript" type="text/javascript" src="../static/jqplot/jquery.jqplot.min.js"></script>
 <script language="javascript" type="text/javascript" src="../static/jqplot/plugins/jqplot.logAxisRenderer.js"></script>
@@ -9,6 +9,7 @@
 <script language="javascript" type="text/javascript" src="../static/jqplot/plugins/jqplot.categoryAxisRenderer.min.js" ></script>
 <link rel="stylesheet" type="text/css" href="../static/jqplot/jquery.jqplot.css" />
 <script type="text/javascript">
+
 $(document).ready(function(){
         $.jqplot.config.enablePlugins = true;
 		var s1 = [];
@@ -37,7 +38,7 @@ $(document).ready(function(){
      
         $('#chart2').bind('jqplotDataClick',
             function (ev, seriesIndex, pointIndex, data) {
-                $('#info1').html('series: '+seriesIndex+', point: '+pointIndex+', data: '+data+', ticks: '+ ticks[pointIndex] );
+
                 actualiza_documentos(ticks[pointIndex]);
 
             }
@@ -63,17 +64,71 @@ $.getJSON('/listadoc/' + cadena,function (json) {
 
 }
 </script>
-</head>
-<body>
 
-<div><span>You Clicked: </span><span id="info1">Nothing yet</span></div>
-<div id="chart2" style="height:500px;width:1000px;"></div>
-<div id="documentos" style="height:500px;width:800px;">
-    <table id="tabla">
+ <div class="row">
+     <div class="col-lg-6">
+    <div id="chart2"></div>
+    <div id="documentos" >
+    <table id="tabla" class="table table-striped" data-sort-name="Nombre" data-sort-order="desc">>
 
     </table>
 
 </div>
+    </div>
 
-</body>
-</html>
+     <div id="cloud" class="col-lg-6">
+         <script language="javascript" type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+<script type="text/javascript" src="/static/js/d3/d3.js"></script>
+<script type="text/javascript" src="/static/js/d3/d3.layout.cloud.js"></script>
+<script type="text/javascript">
+array=[]
+{% for item in output %}
+    array.push(['{{item[0]}}',{{item[1]}}]);
+{% endfor %}
+
+(function() {
+
+var fill = d3.scale.category20();
+
+var layout = d3.layout.cloud()
+    .size([500 , 500])
+    .words(array.map(function(d) {
+      return {text: d[0], size: d[1]*0.05, test: "haha"};
+    }))
+    .padding(5)
+    .rotate(function() { return ~~(Math.random() * 2) * 90; })
+    .font("Impact")
+    .fontSize(function(d) { return d.size/2; })
+    .on("end", draw);
+
+layout.start();
+
+function draw(words) {
+  d3.select("#cloud").append("svg")
+      .attr("width", layout.size()[0])
+      .attr("height", layout.size()[1])
+    .append("g")
+      .attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")
+    .selectAll("text")
+      .data(words)
+    .enter().append("text")
+      .style("font-size", function(d) { return d.size + "px"; })
+      .style("font-family", "Impact")
+      .style("fill", function(d, i) { return fill(i); })
+      .attr("text-anchor", "middle")
+      .attr("transform", function(d) {
+        return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+      })
+      .text(function(d) { return d.text; });
+}
+
+})();
+
+</script>
+          </div>
+     </div>
+
+
+
+
+{% endblock %}
