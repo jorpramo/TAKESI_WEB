@@ -55,7 +55,7 @@
             <h4> <a href="/doc/{{resp._id}}">{{ resp.nombre }}</a></h4>    <h5> Score: ({{resp.score}})</h5>
 
         <p><a class="btn btn-success" href="/doc/pos/{{resp._id}}" role="button">Voto Positivo &raquo;</a></p>
-       <p><a class="btn btn-danger" href="/doc/neg/{{resp._id}}" role="button">Voto Falso &raquo;</a></p>
+       <p><a class="btn btn-danger" href="/doc/neg/{{resp._id}}" role="button">Voto Negativo &raquo;</a></p>
       {% else %}
         <em>No hay documentos coincidentes</em>
       {% endfor %}

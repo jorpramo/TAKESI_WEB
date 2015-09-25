@@ -1,6 +1,19 @@
 {% extends "base.html" %}
 
 {% block body %}
+
+<script language="javascript" type="text/javascript" src="../static/jqplot/jquery.min.js"></script>
+<script>
+$(document).ready(function() {
+$( "ul li" ).addClass(function( index, currentClass ) {
+  var addedClass;
+    if ( currentClass === "Doc" ) {
+    addedClass = "active";
+  }
+  return addedClass;
+});
+});
+</script>
 <style>
       rect.bordered {
         stroke: #E6E6E6;
@@ -63,8 +76,8 @@
           height = 700 - margin.top - margin.bottom,
           gridSize = Math.floor(width / (label.length)),
           legendElementWidth = gridSize*2,
-          buckets = 9,
-          colors = ["#ffffd9","#edf8b1","#c7e9b4","#7fcdbb","#41b6c4","#1d91c0","#225ea8","#253494","#081d58"], // alternatively colorbrewer.YlGnBu[9]
+          buckets = 10,
+          colors = ["#F0D6D3","#E9C2BD","#E2AEA7","#DB9A91","#D3857B","#CC7165","#C55D4F","#BE4939","#B73523","#B0210E"], // alternatively colorbrewer.YlGnBu[9]
           days = label,
           times = label;
 
@@ -154,7 +167,7 @@
 
           legend.append("text")
             .attr("class", "mono")
-            .text(function(d) { console.log(d); return "= " + Math.round(d); })
+            .text(function(d,i) { return i; })
             .attr("x", function(d, i) { return legendElementWidth * i; })
             .attr("y", height + gridSize + margin.top + margin.bottom );
       });
@@ -164,7 +177,7 @@
       var tr = table.selectAll("tr")
       .data(label)
         .enter()
-        .append("tr").html(function(d, i) { fich="PDF/" + d; return "<td>"+ i +"</td><td>"+ d +"</td>"; })
+        .append("tr").html(function(d, i) {  return "<td>"+ i +". </td><td>"+ d +"</td>"; })
 
     </script>
 {% endblock %}

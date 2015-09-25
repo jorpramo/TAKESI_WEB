@@ -14,7 +14,17 @@
         background-color: rgba(95%, 95%, 95%, 0.8);
     }
 </style>
-
+<script>
+$(document).ready(function() {
+$( "ul li" ).addClass(function( index, currentClass ) {
+  var addedClass;
+    if ( currentClass === "Busq" ) {
+    addedClass = "active";
+  }
+  return addedClass;
+});
+});
+</script>
 <script type="text/javascript">
 $(document).ready(function(){
         $.jqplot.config.enablePlugins = true;
@@ -25,7 +35,7 @@ $(document).ready(function(){
 		    array.push([data[i].pos, data[i].neg, data[i].enc, data[i].nombre])
 		}
 
-
+        array.sort(function(a, b){return b[2]-a[2]});
 
         plot1b = $.jqplot('chart2',[array],{
         title: 'Estadistica sobre los documentos',
@@ -73,7 +83,7 @@ $(document).ready(function(){
             data[1] + '<br />' + 'Encontrado: ' + data[2]);
             $('#tooltip1b').show();
             $('#tabla tr').css('background-color', '#ffffff');
-            $('#tabla tr').eq(pointIndex+1).css('background-color', color);
+            $('#tabla tr').eq(pointIndex).css('background-color', color);
         });
 
     // Bind a function to the unhighlight event to clean up after highlighting.

@@ -2,6 +2,19 @@
 
 {% block body %}
 
+<script language="javascript" type="text/javascript" src="../static/jqplot/jquery.min.js"></script>
+<script>
+$(document).ready(function() {
+$( "ul li" ).addClass(function( index, currentClass ) {
+  var addedClass;
+    if ( currentClass === "Corpus" ) {
+    addedClass = "active";
+  }
+  return addedClass;
+});
+});
+</script>
+
 <table class="table table-striped" data-sort-name="Nombre" data-sort-order="desc">
  <thead><tr>
     <th data-field="Nombre" data-sortable="true">Nombre</th>

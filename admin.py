@@ -133,7 +133,7 @@ def estadisticasvotos():
     client = pymongo.MongoClient(set.MONGODB_URI)
     db = client.docs
     DOC=db.DOCS
-    result=DOC.find({},{"nombre":1, 'enc':1, 'pos':1, 'neg':1,'_id':0},{"$sort":{"enc":-1}})
+    result=DOC.find({},{"nombre":1, 'enc':1, 'pos':1, 'neg':1,'_id':0})
 
     data=dumps(list(result))
 
@@ -154,7 +154,7 @@ def busqueda():
     text=[]
     text2=[]
     text3=[]
-    print(respuestas)
+
     for d in docs:
         doc=Documento.Document(d)
         registro=doc.similaridad(pregunta_2)

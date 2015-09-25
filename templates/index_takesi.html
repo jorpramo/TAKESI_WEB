@@ -1,6 +1,18 @@
 {% extends "base.html" %}
 
 {% block body %}
+<script language="javascript" type="text/javascript" src="../static/jqplot/jquery.min.js"></script>
+<script>
+$(document).ready(function() {
+$( "ul li" ).addClass(function( index, currentClass ) {
+  var addedClass;
+    if ( currentClass === "Home" ) {
+    addedClass = "active";
+  }
+  return addedClass;
+});
+});
+</script>
 
       <!-- Jumbotron -->
       <div class="jumbotron">
