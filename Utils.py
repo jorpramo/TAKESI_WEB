@@ -15,7 +15,7 @@ class utilidades():
         return "".join(list(texto))
 
     def SinStopwords(question):
-        nltk.data.path.append('./nltk_data/')
+        nltk.data.path.append('/static/nltk_data/')
         question = question.lower()
         lista = list(question)
         simbolos = [",", "¿", "¡", "?", "!", ".", "(", ")", ";", ":"]
