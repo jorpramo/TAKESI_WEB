@@ -7,6 +7,7 @@ import Documento
 import settings as set
 import sys
 import logging
+import Utils
 from Utils import utilidades
 from flask import Flask, redirect, request, url_for
 from flask import render_template
@@ -145,7 +146,8 @@ def busqueda():
     writer = mongodb.MongoDBPreguntas()
     pregunta=request.form['text']
     pregunta=pregunta.lower()
-    pregunta_2=utilidades.SinStopwords(pregunta)
+    stops=Utils.get_stops()
+    pregunta_2=utilidades.SinStopwords(pregunta, stops)
     pregunta_2=utilidades.Stemming(pregunta_2)
     writer.inserta_pregunta(pregunta_2)
 
@@ -158,7 +160,7 @@ def busqueda():
     for d in docs:
         doc=Documento.Document(d)
         registro=doc.similaridad(pregunta_2)
-        registro2=doc.similaridad_NLTK_tf_idf(pregunta_2)
+        registro2=doc.similaridad_NLTK_tf_idf(pregunta_2, stops)
         registro3=doc.similaridad_cosine(pregunta_2)
 
         for r in registro:

@@ -4,6 +4,7 @@ __author__ = 'jpradas'
 import math
 import pymongo
 import settings as set
+import Utils
 from bson.objectid import ObjectId
 from math import log
 from nltk import word_tokenize
@@ -103,9 +104,9 @@ class Document(object):
         rank = self.score
         q = pregunta
         text = sent
-
+        stops=Utils.get_stops()
         #q = utilidades.SinStopwords(q)
-        text = utilidades.SinStopwords("".join(text))
+        text = utilidades.SinStopwords("".join(text), stops)
         #q = utilidades.Stemming(q)
         text = utilidades.Stemming("".join(text))
         q=q.split()
@@ -132,14 +133,14 @@ class Document(object):
         DOC.update({'_id':self.id}, {'$inc': {'enc': 1}, '$set':  {"fecha": datetime.datetime.utcnow()}})
 
 
-    def similaridad_NLTK_tf_idf(self, pregunta):
+    def similaridad_NLTK_tf_idf(self, pregunta, stops):
 
         #sentencias=self.sents
         sentencias=[s for s in self.sents if len("".join(s))>set.SIZE_PARRAFOS]
         self.totalsentencias=len(sentencias)
         texto=self.texto
 
-        text = utilidades.SinStopwords("".join(texto))
+        text = utilidades.SinStopwords("".join(texto), stops)
         #q = utilidades.Stemming(q)
         text = utilidades.Stemming("".join(text))
         pregunta=pregunta.split()
