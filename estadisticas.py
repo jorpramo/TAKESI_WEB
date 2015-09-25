@@ -12,9 +12,8 @@ class stats(object):
         self.collection = self.conn[db][collection]
 
     def get_data_cloud(self):
-        map = Code("function m() { for(var i in this.cloud)  {emit(this.cloud[i].word, this.cloud[i].total);}}")
-        reduce = Code("function(key, values) { return Array.sum(values);};")
-        result = self.collection.map_reduce(map, reduce, "myresults")
+        self.collection = self.conn['docs']['CLOUD']
+        result = self.collection.find()
         words=[]
         for doc in result.find().sort('value', pymongo.DESCENDING).limit(200):
             words.append([doc['_id'], doc['value']])
