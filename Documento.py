@@ -26,7 +26,7 @@ class TextoCollection(object):
         if hasattr(source, 'words'): # bridge to the text corpus reader
             source = [source.words(f) for f in source.fileids()]
 
-        self._texts = word_tokenize(source)
+        self._texts = source.split()
         #Texto.__init__(self, LazyConcatenation(source))
         self.idf_cache = {}
 

@@ -23,12 +23,6 @@ class utilidades():
         texto=map(porter.stem, text)
         return "".join(list(texto))
 
-    def get_stops(self):
-        f = open('./static/nltk_data/corpora/stopwords/spanish', 'r')
-        stops=[]
-        for line in f:
-            stops.append(line.replace('\n',''))
-        return stops
 
     def SinStopwords(question, stops):
         #nltk.data.path.append(os.path.join(APP_STATIC,'\nltk_data'))
