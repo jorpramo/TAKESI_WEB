@@ -7,6 +7,7 @@ __author__ = 'jpradas'
 import nltk.corpus
 from nltk.stem.porter import PorterStemmer
 from nltk.tokenize import word_tokenize
+import os
 
 class utilidades():
     def Stemming(text):
@@ -15,7 +16,9 @@ class utilidades():
         return "".join(list(texto))
 
     def SinStopwords(question):
-        nltk.data.path.append('./static/nltk_data/')
+        APP_ROOT = os.path.dirname(os.path.abspath(__file__))   # refers to application_top
+        APP_STATIC = os.path.join(APP_ROOT, 'static')
+        nltk.data.path.append(os.path.join(APP_STATIC,'nltk_data'))
 
         question = question.lower()
         lista = list(question)
