@@ -1,5 +1,6 @@
 from collections import defaultdict
 import re
+import Utils
 
 from text_comparer.similarity import similarity
 from nltk.corpus import stopwords
@@ -48,14 +49,8 @@ def vectorize_text(text):
         source: http://www.bckelk.ukfsn.org/words/uk1000n.html
 
         """
-        spanish_stops = set(stopwords.words('spanish'))
+        spanish_stops = Utils.get_stops()
 
-        common_words = set(['the', 'and', 'to', 'of', 'a', 'I', 'in', 'was',
-            'he', 'that', 'it', 'his', 'her', 'you', 'as', 'had', 'with',
-            'for', 'she', 'not', 'at', 'but', 'be', 'my', 'on', 'have', 'him',
-            'is', 'said', 'me', 'which', 'by', 'so', 'this', 'all', 'from',
-            'they', 'no', 'were', 'if', 'would', 'or', 'when', 'what', 'there',
-            'been', 'one', 'could', 'very', 'an', 'who'])
         return [word for word in text_vector if word not in spanish_stops]
 
     text = text.lower()
