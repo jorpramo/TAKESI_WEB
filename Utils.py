@@ -18,7 +18,7 @@ class utilidades():
     def SinStopwords(question):
         APP_ROOT = os.path.dirname(os.path.abspath(__file__))   # refers to application_top
         APP_STATIC = os.path.join(APP_ROOT, 'static')
-        nltk.data.path.append(os.path.join(APP_STATIC,'nltk_data/'))
+        nltk.data.path.append(os.path.join(APP_STATIC,'nltk_data/corpora/'))
 
         question = question.lower()
         lista = list(question)
