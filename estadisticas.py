@@ -13,9 +13,9 @@ class stats(object):
 
     def get_data_cloud(self):
         self.collection = self.conn['docs']['CLOUD']
-        result = self.collection.find()
+        result = self.collection.find().sort('value', pymongo.DESCENDING).limit(200)
         words=[]
-        for doc in result.find().sort('value', pymongo.DESCENDING).limit(200):
+        for doc in result:
             words.append([doc['_id'], doc['value']])
         return words
 
