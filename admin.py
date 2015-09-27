@@ -143,6 +143,7 @@ def estadisticasvotos():
 
 @app.route('/busqueda/', methods=['POST'])
 def busqueda():
+    a=datetime.datetime.now()
     writer = mongodb.MongoDBPreguntas()
     pregunta=request.form['text']
     pregunta=pregunta.lower()
@@ -159,8 +160,9 @@ def busqueda():
 
     for d in docs:
         doc=Documento.Document(d)
+        '''
+        a=datetime.datetime.now()
 
-        '''a=datetime.datetime.now()
         registro=doc.similaridad(pregunta_2)
         b=datetime.datetime.now()
         print(str(b-a))
@@ -200,7 +202,8 @@ def busqueda():
     for tupla3 in text3[:set.TOTAL_RESPUESTAS]:
         linea3.append([tupla3[0],tupla3[1],tupla3[2]])
 
-
+    b=datetime.datetime.now()
+    print(str(b-a))
     return render_template('resultados.html',  resps=respuestas, entries3=linea3,question=pregunta)
 
 @app.route('/graph/')
