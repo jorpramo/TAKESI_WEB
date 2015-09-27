@@ -7,6 +7,10 @@
 <script language="javascript" type="text/javascript" src="../static/jqplot/plugins/jqplot.barRenderer.min.js"></script>
 <script language="javascript" type="text/javascript"  src=" ../static/jqplot/plugins/jqplot.pointLabels.min.js"></script>
 <script language="javascript" type="text/javascript" src="../static/jqplot/plugins/jqplot.categoryAxisRenderer.min.js" ></script>
+<script type="text/javascript" src="../static/jqplot/plugins/jqplot.canvasTextRenderer.min.js"></script>
+<script type="text/javascript" src="../static/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js"></script>
+<script type="text/javascript" src="../static/jqplot/plugins/jqplot.canvasAxisTickRenderer.min.js"></script>
+
 <link rel="stylesheet" type="text/css" href="../static/jqplot/jquery.jqplot.css" />
 <script>
 $(document).ready(function() {
@@ -25,11 +29,11 @@ $(document).ready(function(){
 		var s1 = [];
         var ticks = [];
         $.getJSON('/stats/',function (data) { 
-		console.log(data.length);
+
 		
 		for (var i=0; i<data.length; i++) {ticks.push(data[i]._id);
 		s1.push(data[i].total);}
-		console.log(s1);
+
         plot1 = $.jqplot('chart2', [s1], {
             animate: !$.jqplot.use_excanvas,
             seriesDefaults:{
@@ -39,8 +43,19 @@ $(document).ready(function(){
             axes: {
                 xaxis: {
                     renderer: $.jqplot.CategoryAxisRenderer,
-                    ticks: ticks
-                }
+                    ticks: ticks,
+                    label:'Palabras Clave',
+                    tickRenderer: $.jqplot.CanvasAxisTickRenderer,
+                    tickOptions: {
+              angle: 15
+          }
+                },
+            yaxis:{
+
+            label:'Documentos',
+            labelRenderer: $.jqplot.CanvasAxisLabelRenderer
+            }
+
             },
             highlighter: { show: false }
         });
@@ -73,6 +88,7 @@ $.getJSON('/listadoc/' + cadena,function (json) {
 
  <div class="row">
      <div class="col-lg-6">
+         <p>Distribucion de palabras clave dentro del Corpus</p>
     <div id="chart2"></div>
     <div id="documentos" >
     <table id="tabla" class="table table-striped" data-sort-name="Nombre" data-sort-order="desc">>

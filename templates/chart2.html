@@ -4,7 +4,7 @@
 <script language="javascript" type="text/javascript" src="/static/jqplot/jquery.min.js"></script>
 <script language="javascript" type="text/javascript" src="/static/jqplot/jquery.jqplot.min.js"></script>
 <script language="javascript" type="text/javascript" src="/static/jqplot/plugins/jqplot.bubbleRenderer.js"></script>
-<script type="text/javascript" src="/static/jqplot/plugins/plugins/jqplot.canvasAxisLabelRenderer.min.js"></script>
+<script type="text/javascript" src="/static/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js"></script>
 <link rel="stylesheet" type="text/css" href="../static/jqplot/jquery.jqplot.css" />
 <style>
         #tooltip1b {
@@ -39,7 +39,7 @@ $(document).ready(function(){
 
         plot1b = $.jqplot('chart2',[array],{
         title: 'Estadistica sobre los documentos',
-       height: 600,
+        height: 600,
 
         seriesDefaults:{
             renderer: $.jqplot.BubbleRenderer,
@@ -57,6 +57,7 @@ $(document).ready(function(){
         },
         yaxis:{
           label:'Votos Negativos'
+
         }
       }
 
