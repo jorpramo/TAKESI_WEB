@@ -14,7 +14,7 @@ class BagWords:
         self.collection = self.conn[db][collection]
     def LeeBagWords(self):
         tags=self.collection.find(projection={"_id":0})
-        print(tags.count())
+
         vector=[]
         for t in tags:
             for i,j in t.items():

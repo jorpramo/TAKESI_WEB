@@ -103,7 +103,7 @@ def listadoc(cadena):
 
     resultado=sorted(resultado, key=lambda resultado: resultado[1], reverse=True)
     data=dumps(resultado)
-    print(data)
+
     return data
 
 @app.route('/doc/<id>')
@@ -143,6 +143,7 @@ def estadisticasvotos():
 
 @app.route('/busqueda/', methods=['POST'])
 def busqueda():
+    a=datetime.datetime.now()
     writer = mongodb.MongoDBPreguntas()
     pregunta=request.form['text']
     pregunta=pregunta.lower()
@@ -153,27 +154,38 @@ def busqueda():
 
     respuestas=busqueda_resp(pregunta_2)
     docs=respuestas.clone()
-    text=[]
-    text2=[]
+    #text=[]
+    #text2=[]
     text3=[]
 
     for d in docs:
         doc=Documento.Document(d)
-        registro=doc.similaridad(pregunta_2)
-        registro2=doc.similaridad_NLTK_tf_idf(pregunta_2, stops)
-        registro3=doc.similaridad_cosine(pregunta_2)
+        '''
+        a=datetime.datetime.now()
 
-        for r in registro:
+        registro=doc.similaridad(pregunta_2)
+        b=datetime.datetime.now()
+        print(str(b-a))
+        registro2=doc.similaridad_NLTK_tf_idf(pregunta_2, stops)
+        c=datetime.datetime.now()
+        print(str(c-b))
+        '''
+        registro3=doc.similaridad_cosine(pregunta_2)
+        #d=datetime.datetime.now()
+        #print(str(d-c))
+
+        '''for r in registro:
             for s in r:
                 text.append(s)
         for r2 in registro2:
             for s2 in r2:
                 text2.append(s2)
+        '''
         for r3 in registro3:
             for s3 in r3:
                 text3.append(s3)
 
-
+    '''
     text=sorted(text, key=lambda text: text[1], reverse=True)
     linea=[]
     for tupla in text[:set.TOTAL_RESPUESTAS]:
@@ -183,14 +195,16 @@ def busqueda():
     linea2=[]
     for tupla2 in text2[:set.TOTAL_RESPUESTAS]:
         linea2.append([tupla2[0],tupla2[1],tupla2[2]])
+        '''
 
     text3=sorted(text3, key=lambda text3: text3[1], reverse=True)
     linea3=[]
     for tupla3 in text3[:set.TOTAL_RESPUESTAS]:
         linea3.append([tupla3[0],tupla3[1],tupla3[2]])
 
-
-    return render_template('resultados.html',  resps=respuestas, entries=linea, entries2=linea2, entries3=linea3,question=pregunta)
+    b=datetime.datetime.now()
+    print(str(b-a))
+    return render_template('resultados.html',  resps=respuestas, entries3=linea3,question=pregunta)
 
 @app.route('/graph/')
 def graph():

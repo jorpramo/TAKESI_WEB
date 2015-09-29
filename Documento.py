@@ -90,7 +90,7 @@ class Document(object):
         try:
             IDF=math.log(self.totalsentencias / (1 + (self.sentenciascontermino)))
         except:
-            print("Division por cero")
+            pass
         for row in resultado:
             row[1]=row[1]*IDF # No seria multiplicacion
         registro=[]
